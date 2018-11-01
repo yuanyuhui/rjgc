@@ -1,0 +1,158 @@
+﻿<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<title>学员课表</title>
+		<link rel="stylesheet" href="layui/css/layui.css">
+		<style>
+			#head {
+				display: flex;
+			}
+			
+			#title {
+				padding-top: 10px;
+			}
+			
+			#Teachertitle {
+				margin-top: 10px;
+				margin-bottom: 10px;
+			}
+			/*设置文本居中*/
+			
+			table * {
+				text-align: center;
+			}
+			.dian{
+				margin-left: 10px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="layui-fluid">
+			<form class="layui-form" action="" class="layui-row">
+
+			</form>
+
+			<div id="Teachertitle" class="layui-row">
+				<div class="layui-col-md1" style="margin-top: 10px;">
+					<a  onclick="pagination()"><i class="layui-icon layui-icon-username"></i>学员课表</a>
+				</div>
+				<div class="layui-inline layui-col-md1">
+					<input type="text" class="layui-input" id="begin">
+				</div>
+				<div class="layui-col-md1" style="text-align:center;margin-top: 5px;">~</div>
+				<div class="layui-inline layui-col-md1">
+					<input type="text" class="layui-input" id="end">
+				</div>
+							<a class="dian" href="#" onclick="mohucha()"><i class="layui-icon" style="color:skyblue; font-size: 30px;">&#xe615;</i></a>
+			</div>
+			<!--表格-->
+			<div>
+				<table class="layui-table">
+					<thead>
+						<tr>
+							<th rowspan="2" style="text-align: center;">日期</th>
+							<th rowspan="2" style="text-align: center;">星期</th>
+							<th rowspan="2" style="text-align: center;">班级</th>
+							<th colspan="3" style="text-align: center;">上午</th>
+							<th colspan="3" style="text-align: center;">下午</th>
+						</tr>
+						<tr>
+							<td>教师</td>
+							<td>教室/机房</td>
+							<td>课程</td>
+							<td>教师</td>
+							<td>教室/机房</td>
+							<td>课程</td>
+						</tr>
+					</thead>
+					<tbody id="da">
+
+					</tbody>
+				</table>
+			</div>
+
+		</div>
+
+	</body>
+	<script src="layui/layui.all.js"></script>
+	<script src="layui/layui.js"></script>
+	<script src="layui/lay/modules/form.js"></script>
+	<script src="js/jquery-1.12.4.js"></script>
+	<script src="js/wlq.js"></script>,
+	<script src="js/bootstrap.min.js"></script>
+	<script src="js/vue.js"></script>
+	<script>
+		jQuery(function() {
+			pagination();
+
+		});
+		//获取登录人对象
+		var user = JSON.parse(sessionStorage.getItem("user"));
+		var classId = user.id;
+		function pagination() {
+			
+			$("#da").empty();
+			$.ajax({
+
+				type: 'GET',
+				url: 'http://127.0.0.1:8080/course/wlq/queryAllStudentKebiao/' + classId,
+				dataType: 'json',
+				success: function(data) {
+					$.each(data.list, function(i, obj) {
+						var $row = $("<tr><td>" + obj.date + "</td><td>" + obj.week + "</td><td>" + obj.classNameAM + "</td><td id='yi' data-id='obj.teacherIdAM'>" + data.shang[i] + "</td><td>" + data.room[i] + "</td><td>" + obj.courseNameAM + "</td><td id='er' data-id='obj.teacherIdPM'>" + data.xia[i] + "</td><td>" + data.room2[i] + "</td><td>" + obj.courseNamePM + "</td></tr>");
+						$("#da").append($row);
+
+					});
+
+				}
+
+			});
+
+		};
+
+		function mohucha() {
+
+			var riqi = jQuery("#begin").val();
+			var riqi2 = jQuery("#end").val();
+
+			if(riqi == "" && riqi2 != "") {
+				alert("请输入完整");
+			} else if(riqi != "" && riqi2 == "") {
+				alert("请输入完整");
+			} else {
+				
+				
+				$("#da").empty();
+				$.ajax({
+					type: 'GET',
+					url: 'http://127.0.0.1:8080/course/wlq/queryAllStudentKebiao2/' + classId + '/' + riqi + '/' + riqi2,
+					dataType: 'json',
+					success: function(data) {
+						$.each(data.list, function(i, obj) {
+							var $row = $("<tr><td>" + obj.date + "</td><td>" + obj.week + "</td><td>" + obj.classNameAM + "</td><td id='yi' data-id='obj.teacherIdAM'>" + data.shang[i] + "</td><td>" + data.room[i] + "</td><td>" + obj.courseNameAM + "</td><td id='er' data-id='obj.teacherIdPM'>" + data.xia[i] + "</td><td>" + data.room2[i] + "</td><td>" + obj.courseNamePM + "</td></tr>");
+							$("#da").append($row);
+						});
+					}
+				});
+			}
+
+		};
+
+		layui.use('laydate', function() {
+			var laydate = layui.laydate;
+
+			//执行一个laydate实例
+			laydate.render({
+				elem: '#begin' //指定元素
+			});
+			laydate.render({
+				elem: '#end' //指定元素
+			});
+		});
+	</script>
+
+</html>

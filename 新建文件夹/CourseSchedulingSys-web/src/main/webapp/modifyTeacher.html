@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+<title></title>
+<link rel="stylesheet" href="css/bootstrap.min.css" />
+<link rel="stylesheet" href="layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="css/bootstrap-multiselect.css" media="all" />
+<style type="text/css">
+</style>
+</head>
+
+<body>
+	<form class="layui-form" action=""  lay-filter='myForm'>
+		 <div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">工号</label>
+				<div class="col-sm-10">
+					<input type="text" id="id" name="id" class="form-control" style="width: 20%;" >
+				</div>
+			</div>
+		<div class="layui-form-item">
+			<label for="inputEmail3" class="col-sm-2 control-label">姓名</label>
+			<div class="col-sm-10">
+				<input type="text" id="name" name="name" class="form-control"
+					style="width: 20%;">
+			</div>
+
+		</div>
+		<div class="layui-form-item">
+			<label for="inputEmail3" class="col-sm-2 control-label">性别</label>
+			<div class="layui-input-block ">
+				<input type="radio" name="sex" value="男" title="男"> <input
+					type="radio" name="sex" value="女" title="女" checked> <input
+					type="radio" name="sex" value="" title="中性" disabled>
+			</div>
+		</div>
+	</form>
+	<form class="layui-form" action=""  lay-filter='myForm'>
+		<div class="layui-form-item">
+			<label for="inputEmail3" class="col-sm-2 control-label">电话</label>
+			<div class="col-sm-10">
+				<input type="text" id="phone" name="phone" class="form-control"
+					style="width: 20%;">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label for="inputEmail3" class="col-sm-2 control-label">身份证</label>
+			<div class="col-sm-10">
+				<input type="text" id="identityCard" name="identityCard" class="form-control"
+					style="width: 40%;">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label for="inputEmail3" class="col-sm-2 control-label">地址</label>
+			<div class="col-sm-10">
+				<input type="text" id="address" name="address" class="form-control"
+					style="width: 40%;">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label for="inputPassword3" class="col-sm-2 control-label">教员简介</label>
+			<div class="col-sm-10">
+				<textarea id="description" name="description" class="form-control" rows="8"
+					placeholder=""></textarea>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label for="inputEmail3" class="col-sm-2 control-label">密码</label>
+			<div class="col-sm-10">
+				<input type="password" id="pwd" name="pwd" class="form-control" style="width: 20%;">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label for="inputEmail3" class="col-sm-2 control-label">确认密码</label>
+			<div class="col-sm-10">
+				<input type="password" id="affirmPwd" name="pwd" class="form-control"
+					style="width: 20%;">
+			</div>
+		</div>
+
+
+		<div class="col-sm-offset-2 col-sm-10">
+			
+			<button type="button" id="addTeacher" class="btn btn-default">保存</button>
+			<button class="btn btn-default" data-dismiss="modal">取消</button>
+		</div>
+	</form>
+
+</body>
+<script type="text/javascript" src="layui/layui.all.js"></script>
+<script type="text/javascript" src="js/jquery-1.12.4.js"></script>
+<script type="text/javascript" src="layui/lay/modules/form.js"></script>
+<script>
+$(function() {
+	var layForm = null;
+	layui.use("form", function() {
+		layForm = layui.form;
+	})
+
+	//获取缓存
+	var teacherId = window.sessionStorage.getItem("teacherId");
+	//渲染需要修改的教室
+	if (teacherId) {
+		$.getJSON("http://localhost:8080/course/lxh_userinfos/userInfo/"
+				+ teacherId, function(teacher) {
+
+			layForm.val("myForm", {
+				"id" : teacher.id,
+				"name" : teacher.name,
+				"pwd" : teacher.pwd,
+				"sex" : teacher.sex,
+				"identityCard" :  teacher.identityCard,
+				"phone" :  teacher.phone,
+				"address" : teacher.address,
+				"inDate" :  teacher.inDate,
+				"outDate" :  teacher.outDate,
+				"isLocked" :  teacher.isLocked,
+				"description" :  teacher.description
+			});
+		});
+	}
+	$("#addTeacher").click(
+			
+			function() {
+				var id=jQuery("#id").val();
+				var name = jQuery("#name").val();
+				var skill = jQuery("#skill").val();
+				var phone = jQuery("#phone").val();
+				var identityCard = jQuery("#identityCard").val();
+				var address = jQuery("#address").val();
+				var description = jQuery("#description").val();
+				var pwd = jQuery("#pwd").val();
+				var affirmPwd = jQuery("#affirmPwd").val();
+				var sex = jQuery("input[name='sex']").val();
+
+				if (name == "" || name == null) {
+					layer.open({
+						title : '提示',
+						content : '名字不能为空！'
+					});
+					return;
+				}
+				if (phone == "" || phone == null) {
+					layer.open({
+						title : '提示',
+						content : '电话号码不能为空！'
+					});
+					return;
+				}
+				if (pwd !== affirmPwd) {
+					layer.open({
+						title : '提示',
+						content : '输入两次密码不一样！'
+					});
+					return;
+				}
+				//组装json数据
+				alert(id);
+				var userInfo = {};
+				userInfo["id"]=id;
+				userInfo["name"] = name;
+				userInfo["pwd"] = pwd;
+				userInfo["sex"] = sex;
+				userInfo["identityCard"] = identityCard;
+				userInfo["phone"] = phone;
+				userInfo["address"] = address;
+				userInfo["description"] = description;
+				$.ajax("http://localhost:8080/course/lxh_userinfos/userinfo", {
+					"type" : "put",
+					"dataType" : "json",
+					"timeout" : 4000,
+					"data" : JSON.stringify(userInfo),
+					"contentType" : "application/json",
+					"success" : function(json) {
+						if (json.code == 200) {
+							layer.open({
+								title : '提示',
+								content : '修改成功！'
+							});
+							setTimeout(function() {
+								var index = parent.layer
+										.getFrameIndex(window.name); //获取窗口索引
+								parent.layer.close(index); // 关闭layer 
+								window.parent.location.reload(); //刷新父页面
+							}, 1500);
+						}
+					}
+				});
+			});
+
+	//重置
+	$("#cz").click(function() {
+		$("[name=id]").val('');
+		$("[name=name]").val('');
+		jQuery("#name").val('');
+		jQuery("#skill").val('');
+		jQuery("#phone").val('');
+		jQuery("#identityCard").val('');
+		jQuery("#address").val('');
+		jQuery("#description").val('');
+		jQuery("#pwd").val('');
+		jQuery("#affirmPwd").val('');
+		jQuery("input[name='sex']").val('');
+	});
+});
+
+</script>
+</html>

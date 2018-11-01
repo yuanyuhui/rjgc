@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>修改书本信息</title>
+		<link rel="stylesheet" href="css/bootstrap.min.css" />
+	</head>
+
+	<body>
+		<form class="form-horizontal">
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">书本名称</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" name="name" placeholder="请输入课程名称">
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">书本简称</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" name="simpleName" value="" placeholder="请输入课程简称"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">年级编号</label>
+				<div class="col-sm-10">
+					<select class="layui-select-disabled" name="periodId">
+						<option value=""></option>
+						<option value="1">S1</option>
+						<option value="2">S2</option>
+						<option value="3">y2</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-10 text-right">
+					<input type="button" class="layui-btn" onclick="xz()" value="新增" />
+				</div>
+			</div>
+		</form>
+
+	</body>
+	<script type="text/javascript" src="layui/lay/modules/form.js" ></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script>
+		function xz(){
+			var name = jQuery("[name=name]").val();
+			var simpleName = jQuery("[name=simpleName]").val();
+			var periodId = jQuery("[name=periodId]").val();
+			if(name != "" && simpleName != "" && periodId != "") {
+				var json = {};
+				json["name"] = name;
+				json["simpleName"] = simpleName;
+				json["periodId"] = periodId;
+				jQuery.ajax({
+					url: "http://127.0.0.1:8080/course/yyhCourse/CourseVo",
+					type: "POST",
+					data: JSON.stringify(json),
+					contentType: "application/json",
+					dataType: "json",
+					success: function(data) {
+						alert(data.msg);
+						if(data.code == "200") {
+							jQuery("#windowDialog").modal("hide");
+						}
+					}
+				});
+			} else {
+				alert("新增课程信息不完整");
+				return false;
+			}
+		}
+	</script>
+
+</html>

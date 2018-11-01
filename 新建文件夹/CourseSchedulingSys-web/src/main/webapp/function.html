@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>权限管理</title>
+		<link rel="stylesheet" href="css/bootstrap.min.css" />
+		<link rel="stylesheet" href="layui/css/layui.css" media="all">
+	</head>
+
+	<body>
+		<div style="display: flex; align-items: center; height: 40px; margin-left: 20px;">
+			<p style="font-size: 14px;">说明：角色设定并不指定到任何一个模块，不同的模块可以给定一个角色.</p>
+			<div style="margin-left: 50px;" id="an">
+				<a href="javascript:showWindowDialog('addRole.html','新增角色');">
+					<button class="layui-btn layui-btn-radius layui-btn-sm ZZZ">
+						<i class="layui-icon">&#xe654;</i>添加
+					</button>
+				</a>
+				<button class="layui-btn layui-btn-radius layui-btn-sm ZZZ" id="updaterole">
+					<i class="layui-icon">&#xe642;</i>编辑
+				</button>
+				<button class="layui-btn layui-btn-radius layui-btn-sm ZZZ" id="del">
+					<i class="layui-icon">&#xe640;</i>刪除
+				</button>
+			</div>
+		</div>
+		<div style="display: flex;" id="uss">
+			<div name="us" style="display: flex; flex-direction: column; margin-left: 50px; cursor: pointer;" v-for="(obj,index) in grade">
+				<i class="layui-icon layui-icon-username" style="font-size: 40px;"></i>
+				<span v-text="obj.id" style="display: none;" name="role"></span> <span v-text="obj.name"></span>
+			</div>
+		</div>
+		<div class="layui-tab layui-tab-card">
+			<ul class="layui-tab-title">
+				<li class="layui-this" lay-id="yhqx" onclick="shows()">角色权限</li>
+				<li lay-id="yhgl" onclick="hides()">用户管理</li>
+			</ul>
+			<div class="layui-tab-content">
+				<div class="layui-tab-item layui-show" id="jsqx">
+					<div>
+						<button class="layui-btn layui-btn-sm ZZZ" id="sz_dialog">
+							<i class="layui-icon">&#xe656;</i>设置
+						</button>
+					</div>
+					<table class="layui-table">
+						<thead>
+							<tr>
+								<th>序号</th>
+								<th>模块编号</th>
+								<th>模块名称</th>
+							</tr>
+						</thead>
+						<tbody id="the_quan">
+							<tr id='allgly' style="display: none;"><td colspan='3' rowspan='2' align='center' valign='middle'>管理员具有所有操作权限</td></tr>
+							<tr v-for="(obj,index) in grades">
+								<td v-text="index+1"></td>
+								<td v-text="obj.id"></td>
+								<td v-text="obj.name"></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="layui-tab-item" id="yhgl">
+					<div class="layui-form-item">
+						<div class="layui-input-block" style="display: flex; margin-left: -1px;">
+							<label class="layui-form-label">姓名：</label>
+							<input type="text" id="moyh" placeholder="请输入姓名..." style="width: 300px; margin-right: 10px;" class="layui-input">
+							<button class="layui-btn" id="mouser">
+								<i class="layui-icon">&#xe615;</i>
+							</button>
+						</div>
+					</div>
+					<table class="layui-table" id="u_user">
+						<thead>
+							<tr>
+								<th>编号</th>
+								<th>姓名</th>
+								<th>性别</th>
+								<th>职务</th>
+								<th>电话</th>
+								<th>操作</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr v-for="(obj,index) in graders">
+								<td v-text="obj.id"></td>
+								<td v-text="obj.name"></td>
+								<td v-text="obj.sex"></td>
+								<td v-text="obj.rname"></td>
+								<td v-text="obj.phone"></td>
+								<td>
+									<button class="layui-btn layui-btn-sm" name="updateyh"><i class="layui-icon">&#xe642;</i>编辑</button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+
+		<!-- Modal -->
+		<div id="windowDialog" class="modal fade" data-backdrop="static" data-keyboard="false">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header" data-code="">
+						<button class="close" data-dismiss="modal">&times;</button>
+						<h4 class="modal-title">模块提示</h4>
+					</div>
+					<div class="modal-body"></div>
+				</div>
+			</div>
+		</div>
+
+		<script src="layui/layui.all.js"></script>
+		<script src="js/vue.js"></script>
+		<script src="js/jquery-1.12.4.js"></script>
+		<script type="text/javascript" src="js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="js/t3.js"></script>
+		<script src="js/Dialog.js"></script>
+		<script>
+			$(function() {
+				var the_roleid = 1;
+				var qxPage;
+				var yhPage;
+				//权限查询
+				var vmq = new Vue({
+					el: "#the_quan",
+					data: {
+						grades: []
+					},
+					created: function() {
+						$.getJSON(
+							"http://localhost:8080/course/authorit/authorit/function/" + the_roleid,
+							function(data) {
+								qxPage = data;
+								vmq.grades = data;
+							});
+					}
+				});
+				//用户查询
+				var vmy = new Vue({
+					el: "#u_user",
+					data: {
+						graders: []
+					},
+					created: function() {
+						$.getJSON(
+							"http://localhost:8080/course/authorit//authorit/ur/" + the_roleid + "/" + 1 + "/" + 6,
+							function(
+								data) {
+								vmy.graders = data.list;
+								yhPage = data;
+							});
+					}
+				});
+				$("#sz_dialog").click(
+					function() {
+						showWindowDialogCode("editFunction.html", "设置角色权限",
+							the_roleid);
+					});
+				//查询角色
+				QueryRole();
+				//编辑角色
+				$("#updaterole").click(function() {
+					if (the_roleid == 1) {
+						alert("请选择角色！");
+					} else {
+						showWindowDialogCode("update.html", "设置角色信息", the_roleid);
+					}
+				});
+				//渲染 角色权限查询
+				$(document).on(
+					'click',
+					"[name=us]",
+					function() {
+						$("[name=us]").css("color", "#000000");
+						$(this).css("color", "brown");
+						the_roleid = $(this).find("[name=role]").text();
+						if (the_roleid == 1) {
+							$("#allgly").show();
+						}else{
+							$("#allgly").hide();
+						}
+						$.getJSON(
+							"http://localhost:8080/course/authorit/authorit/function/" + the_roleid,
+							function(data) {
+								vmq.grades = data;
+							});
+						$.getJSON(
+							"http://localhost:8080/course/authorit/authorit/ur/" + the_roleid + "/" + 1 + "/" + 6,
+							function(data) {
+								vmy.graders = data.list;
+							});
+					});
+				//删除角色
+				$("#del").click(
+					function() {
+						$.ajax(
+							"http://localhost:8080/course/authorit/authorit/" + the_roleid, {
+								type: "DELETE",
+								dataType: "json",
+								contentType: "application/json",
+								success: function(data) {
+									if (data.code == 200) {
+										alert("刪除成功！");
+										location.reload(); //重新加载页面
+									}else{
+										alert("该角色还存在用户无法删除！");
+									}
+								}
+							})
+					});
+				//模糊查询用户
+				$("#mouser").click(
+					function() {
+						var name = $("#moyh").val();
+						$("#moyh").val("");
+						alert(name);
+						$.getJSON(
+							"http://localhost:8080/course/authorit/authorit/ru/" + name + "/" + 1 + "/" + 6,
+							function(
+								data) {
+								vmy.graders = data.list;
+							});
+					});
+				$(document).on(
+					'click',
+					"[name=updateyh]",
+					function() {
+						var code = $(this).parents("tr").find("td:eq(1)").text();
+						showWindowDialogCode("userAuthor.html", "编辑用户信息", code);
+					});
+				//结束
+				if (the_roleid == 1) {
+					$("#allgly").show();
+				}
+			});
+			//显示
+			function shows() {
+				$("#an").show();
+			}
+			//隐藏
+			function hides() {
+				$("#an").hide();
+			}
+			//选项卡
+			layui.use('element', function() {
+				var element = layui.element;
+				//获取hash来切换选项卡，假设当前地址的hash为lay-id对应的值
+				var layid = location.hash.replace(/^#test1=/, '');
+				element.tabChange('test1', layid); //假设当前地址为：http://a.com#test1=222，那么选项卡会自动切换到“发送消息”这一项
+				//监听Tab切换，以改变地址hash值
+				element.on('tab(test1)', function() {
+					location.hash = 'test1=' + this.getAttribute('lay-id');
+				});
+			});
+
+			function QueryRole() {
+				var vm = new Vue({
+					el: "#uss",
+					data: {
+						grade: []
+					},
+					created: function() {
+						$.getJSON(
+							"http://localhost:8080/course/authorit/authorit/role",
+							function(data) {
+								vm.grade = data;
+							});
+					}
+				})
+			}
+		</script>
+	</body>
+
+</html>

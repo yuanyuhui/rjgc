@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>添加书本信息</title>
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="layui/css/layui.css" />
+	</head>
+	<style>
+		body {
+			width: 900px;
+		}
+		/*ul li{
+			list-style-type: none;
+		}*/
+		
+		ol {
+			list-style-type: none;
+			counter-reset: sectioncounter;
+		}
+		
+		ol li:before {
+			font-family: "微软雅黑";
+			content: counter(sectioncounter) ".";
+			counter-increment: sectioncounter;
+		}
+	</style>
+
+	<body>
+		<form class="form-horizontal">
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label"><h3>书本信息</h3></label>
+			</div>
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">书本名称</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" name="name" placeholder="请输入课程名称">
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">书本简称</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" name="simpleName" value="" placeholder="请输入课程简称" />
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">年级编号</label>
+				<div class="col-sm-10">
+					<select class="layui-select-disabled" name="periodId">
+						<option value="">请选择</option>
+						<option value="1">S1</option>
+						<option value="2">S2</option>
+						<option value="3">y2</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label"><h3>课程信息</h3></label>
+			</div>
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">
+						<input type="button" class="btn btn-default" onclick="xzkc()" value="添加课程信息" />				
+				</label>
+				<div class="col-sm-10">
+					<ol class="layui-ul" id="tjkcxx">
+					</ol>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-10 text-right">
+					<input type="button" class="btn btn-default" onclick="xz()" value="新增" />
+					<input type="reset" class="btn btn-default" value="重置" />
+				</div>
+			</div>
+		</form>
+
+	</body>
+	<script src="layui/layui.js"></script>
+	<script src="layui/lay/modules/form.js"></script>
+	<script src="js/jquery-1.12.4.js"></script>
+	<script>
+		function xz() {
+			var CourseVo2 = [];
+			for(var i = 0; i < jQuery("[name=cousekc]").length; i++) {
+				var obj = new Object();
+				obj.name = jQuery("[name=cousekc]")[i].innerHTML;
+				CourseVo2.push(obj);
+			}
+			for(var i = 0; i < jQuery("[name=cousekc1]").length; i++) {
+				CourseVo2[i].name1 = jQuery("[name=cousekc1]")[i].innerHTML;
+			}
+			for(var i = 0; i < jQuery("[name=cousekc2]").length; i++) {
+				CourseVo2[i].name2 = jQuery("[name=cousekc2]")[i].innerHTML;
+			}
+			var pdname = new Array();
+			jQuery.each(CourseVo2, function(e, b) {
+				pdname.push(b.name);
+			});
+			if(isRepeat(pdname)) {
+				layer.alert("课程名称存在重复")
+				return;
+			}
+			var name = jQuery("[name=name]").val();
+			var simpleName = jQuery("[name=simpleName]").val();
+			var periodId = jQuery("[name=periodId]").val();
+			if(name != "" && simpleName != "" && periodId != "") {
+				var json = {};
+				json["name"] = name;
+				json["simpleName"] = simpleName;
+				json["periodId"] = periodId;
+				json["CourseVo2"] = CourseVo2;
+				jQuery.ajax({
+					url: "http://127.0.0.1:8080/course/yyhCourse/cousevo",
+					type: "POST",
+					data: JSON.stringify(json),
+					contentType: "application/json",
+					dataType: "json",
+					success: function(data) {
+						layer.alert(data.msg);
+						if(data.code == "200") {
+							var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+							parent.layer.close(index); //再执行关闭
+						}
+					}
+				});
+			} else {
+				alert("新增课程信息不完整");
+				return false;
+			}
+		}
+
+		function xzkc() {
+			layer.open({
+				type: 2,
+				title: ['添加课程信息', 'font-size:18px;'],
+				content: 'addcorsevo1.html',
+				area: ['600px', '400px'],
+				skin: 'demo-class',
+				anim: 5,
+				maxmin: true,
+				end: function() {
+					var addcorsevo1 = window.sessionStorage.getItem("addcorsevo1");
+					var json_addcorsevo1 = JSON.parse(addcorsevo1);
+					var li = jQuery('<li>' +
+						'课程名称:<label  name="cousekc">' + json_addcorsevo1.name + '</label>,课程简称:<label  name="cousekc1">' + json_addcorsevo1.simpleName + '</label>,课程课时数:<label  name="cousekc2">' + json_addcorsevo1.courseCount + '</label>节&nbsp;&nbsp;' +
+						'<a href="#" onclick="remove(this)"><i class="layui-icon layui-icon-close" style="font-size: 19px; color: #1E9FFF;"></i></a>' +
+						'</li>');
+					jQuery("#tjkcxx").append(li);
+				}
+			});
+		}
+
+		function remove(d) {
+			jQuery(d).parent().remove();
+		}
+
+		function isRepeat(arr) {
+
+			var hash = {};
+
+			for(var i in arr) {
+
+				if(hash[arr[i]])
+
+					return true;
+
+				hash[arr[i]] = true;
+
+			}
+
+			return false;
+
+		}
+	</script>
+
+</html>

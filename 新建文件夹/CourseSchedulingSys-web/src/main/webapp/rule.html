@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>排课规则</title>
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<link rel="stylesheet" href="css/bootstrap.min.css" />
+		<link rel="stylesheet" href="layui/css/layui.css" />
+		<style>
+			* {
+				color: black;
+			}
+			
+			li {
+				margin-top: 5px;
+			}
+			
+			.btnPosition {
+				position: relative;
+				top: -5px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="layui-tab">
+			<ul class="layui-tab-title" id="tit">
+				<li class="layui-this">班级排课时间</li>
+				<li>时间规则</li>
+			</ul>
+			<div class="layui-tab-content container" id="tab">
+				<div class="layui-tab-item layui-show row" id="vmSchedulingRuleVo">
+					<div class="col-md-4">
+						<h5 style="padding-bottom:6px ;">全部班级</h5>
+						<div id="classList" style="width: 240px;height:400px;border: 1px solid lightgrey;overflow-y: scroll;padding:10px">
+							<ul>
+								<li v-if="temp.teachername!=''" v-for="(temp,index) in SchedulingRuleVo"><input type="checkbox" name="classes" v-bind:id="temp.id" v-bind:title="temp.name+'-'+temp.teachername" v-bind:value="temp.teacherId" lay-skin="primary">{{temp.name}}-{{temp.teachername}}</li>
+							</ul>
+						</div>
+					</div>
+
+					<div class="col-md-4 container">
+						<p class="row">
+							<h5 class="col-md-4" style="margin-left:-13px ;">上午排课</h5><button class="btn btn-xs col-md-2 btnPosition" id="joinAM">添加</button><button id="removeAM" class="btn btn-xs col-md-2 btnPosition" style="margin-left:5px ;">移除</button></p>
+						<div id="classList" style="width: 240px;height:400px;border: 1px solid lightgrey;overflow-y: scroll;padding:10px">
+							<ul id="amList">
+								<li v-if="temp.teachername!=''" v-for="(temp,index) in SchedulingRuleVo1"><input type="checkbox" name="classes1" v-bind:id="temp.id" v-bind:title="temp.name+'-'+temp.teachername" v-bind:value="temp.teacherId" lay-skin="primary">{{temp.name}}-{{temp.teachername}}</li>
+							</ul>
+						</div>
+					</div>
+
+					<div class="col-md-4 container">
+						<p class="row">
+							<h5 class="col-md-4" style="margin-left:-13px ;">下午排课</h5><button class="btn btn-xs col-md-2 btnPosition" id="joinPM">添加</button><button id="removePM" class="btn btn-xs col-md-2 btnPosition" style="margin-left:5px ;">移除</button></p>
+						<div id="classList" style="width: 240px;height:400px;border: 1px solid lightgrey;overflow-y: scroll;padding:10px">
+							<ul id="pmList">
+								<li v-if="temp.teachername!=''" v-for="(temp,index) in SchedulingRuleVo2"><input type="checkbox" name="classes2" v-bind:id="temp.id" v-bind:title="temp.name+'-'+temp.teachername" v-bind:value="temp.teacherId" lay-skin="primary">{{temp.name}}-{{temp.teachername}}</li>
+							</ul>
+						</div>
+					</div>
+					<div class="col-md-12 container text-right">
+						<br />
+						<div><input type="button" id="xyb1" class="btn layui-btn" value="下一步" /></div>
+					</div>
+
+				</div>
+
+				<div class="layui-tab-item">
+					<h3>正课时间:</h3>
+					<div class="row text-right">
+						<a href="#" id="ts">时间规则提示</a>
+					</div>
+					<br />
+					<div class="row">
+
+						<span>	
+						<label>上午开始时间</label>&nbsp;&nbsp;<input type="text" value="" name="zk_sw" placeholder="时间格式 00:00" class="layui-text" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						<label>下午开始时间</label>&nbsp;&nbsp;<input type="text" value="" name="zk_xw" placeholder="时间格式 00:00" class="layui-text" />
+						</span>
+
+					</div>
+					<br />
+					<div class="row">
+
+						<span>	
+						<label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;课间时间</label>&nbsp;&nbsp;<input type="text" value="10" name="kjsj"  placeholder="08-15分钟" class="layui-text" /><label>分钟</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						<label>一节课时间</label>&nbsp;&nbsp;<input type="text" value="45"  name="oneclassTime" placeholder="40-60分钟" class="layui-text" /><label>分钟</label>
+						</span>
+
+					</div>
+					<br />
+					<div class="row">
+
+						<span>	
+						<label>半天上课次数</label>&nbsp;&nbsp;<input type="text" value="5"  placeholder="5节" name="gotoclassnumber" class="layui-text" /><label>节</label>
+						</span>
+
+					</div>
+
+					<hr />
+					<h3>自习时间:</h3>
+					<br />
+					<div class="row">
+
+						<span>	
+						<label>上午开始时间</label>&nbsp;&nbsp;<input type="text" value="" name="zx_sw" placeholder="时间格式 00:00" class="layui-text" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						<label>下午开始时间</label>&nbsp;&nbsp;<input type="text" value="" name="zx_xw" placeholder="时间格式 00:00" class="layui-text" />
+						</span>
+
+					</div>
+					<br />
+					<div class="row">
+
+						<span>	
+						<label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;课间时间</label>&nbsp;&nbsp;<input type="text" value="10" name="kjsj"  placeholder="08-15分钟" class="layui-text" /><label>分钟</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						<label>一节课时间</label>&nbsp;&nbsp;<input type="text" value="40"  name="oneclassTime" placeholder="40-60分钟" class="layui-text" /><label>分钟</label>
+						</span>
+
+					</div>
+					<br />
+					<div class="row">
+
+						<span>	
+						<label>半天上课次数</label>&nbsp;&nbsp;<input type="text" value="4" name="gotoclassnumber1"  placeholder="4节" class="layui-text" /><label>节</label>
+						</span>
+
+					</div>
+					<br />
+					<div class="row text-right">
+						<input class="btn layui-btn" value="上一步" id="syb1" style="width: 78px;" />
+						<input class="btn layui-btn" value="确认生成" id="qr" style="width: 100px;" />
+						<input class="btn layui-btn" value="下一步" id="xyb2" style="width: 78px;" />
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+	</body>
+	<script type="text/javascript" src="js/jquery-1.12.4.js"></script>
+	<script type="text/javascript" src="js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="layui/layui.js"></script>
+	<script type="text/javascript" src="layui/layui.all.js"></script>
+	<script type="text/javascript" src="js/vue.js"></script>
+	<script>
+		function i1() {
+			jQuery.getJSON("http://127.0.0.1:8080/course/yyhSchedulingRule/SchedulingRuleVo/2", function(data) {
+				vm.SchedulingRuleVo = data;
+			});
+		}
+
+		jQuery("#ts").click(function() {
+			layer.open({
+				type: 2,
+				title: ['时间规则提示', 'font-size:25px;'],
+				content: 'ts.html',
+				area: ['1000px', '550px'],
+				skin: 'demo-class',
+				anim: 5,
+				maxmin: true,
+				//				end: function() {
+				//					pagination(pageIndex, pageSize, type, condition);
+				//				}
+			});
+		});
+
+		var id_s = new Array();
+		var id_s1 = new Array();
+		jQuery("#syb1").click(function() {
+			jQuery("#tab").find(".layui-tab-item").eq(1).removeClass("layui-show row");
+			jQuery("#tab").find(".layui-tab-item").eq(0).addClass("layui-show row");
+			jQuery("#tit").find("li").eq(1).removeClass("layui-this");
+			jQuery("#tit").find("li").eq(0).addClass("layui-this");
+		});
+
+		jQuery("#xyb2").click(function() {
+			layer.alert('设置成功!');
+		});
+
+		/**
+		 * vue模板数据渲染
+		 */
+		var vm = new Vue({
+			el: "#vmSchedulingRuleVo",
+			data: {
+				SchedulingRuleVo: [],
+				SchedulingRuleVo1: [],
+				SchedulingRuleVo2: []
+			}
+		});
+
+		//注意：选项卡 依赖 element 模块，否则无法进行功能性操作
+		layui.use('element', function() {
+			var element = layui.element;
+
+			//…
+		});
+
+		jQuery("#qr").click(function() {
+			if(jQuery("[name=kjsj]").val() < 8 || jQuery("[name=kjsj]").val() > 15) {
+				layer.alert("课间时间格式不对!");
+				return;
+			}
+			if(jQuery("[name=oneclassTime]").val() < 40 || jQuery("[name=oneclassTime]").val() > 60) {
+				layer.alert("一节课时间格式不对!");
+				return;
+			}
+			if(jQuery("[name=gotoclassnumber]").val() != 4 && jQuery("[name=gotoclassnumber]").val() != 5) {
+				layer.alert("半天上课次数格式不对!");
+				return;
+			}
+			if(jQuery("[name=gotoclassnumber1]").val() != 4 && jQuery("[name=gotoclassnumber1]").val() != 5) {
+				layer.alert("半天上课次数格式不对!");
+				return;
+			}
+			var zk = {};
+			var zx = {};
+
+			zk["startforenoonTime"] = jQuery("[name=zk_sw]").val();
+			zk["startafternoonTime"] = jQuery("[name=zk_xw]").val();
+			zk["startTime"] = jQuery("[name=kjsj]").val();
+			zk["gotoclassnumber"] = jQuery("[name=gotoclassnumber]").val();
+			zk["oneclassTime"] = jQuery("[name=oneclassTime]").val();
+
+			zx["startforenoonTime"] = jQuery("[name=zx_sw]").val();
+			zx["startafternoonTime"] = jQuery("[name=zx_xw]").val();
+			zx["startTime"] = jQuery("[name=kjsj]").val();
+			zx["gotoclassnumber"] = jQuery("[name=gotoclassnumber1]").val();
+			zx["oneclassTime"] = jQuery("[name=oneclassTime]").val();
+			console.log(zk);
+			console.log(zx);
+			window.sessionStorage.setItem("zk", JSON.stringify(zk));
+			window.sessionStorage.setItem("zx", JSON.stringify(zx));
+			layer.open({
+				type: 2,
+				title: ['时间课表', 'font-size:18px;'],
+				content: 'time.html',
+				area: ['1000px', '550px'],
+				skin: 'demo-class',
+				anim: 5,
+				maxmin: true,
+			});
+		});
+
+		jQuery(function() {
+			var myDate = new Date();
+			var yf = myDate.getMonth() + 1;
+			if(yf > 0 && yf <= 6) {
+				jQuery("[name=zk_sw]").val("08:30");
+				jQuery("[name=zk_xw]").val("13:20");
+				jQuery("[name=zx_sw]").val("08:40");
+				jQuery("[name=zx_xw]").val("13:30");
+			} else {
+				jQuery("[name=zk_sw]").val("08:50");
+				jQuery("[name=zk_xw]").val("13:50");
+				jQuery("[name=zx_sw]").val("08:40");
+				jQuery("[name=zx_xw]").val("13:40");
+			}
+
+			jQuery.getJSON("http://127.0.0.1:8080/course/yyhSchedulingRule/SchedulingRuleVo/2", function(data) {
+				vm.SchedulingRuleVo = data;
+			});
+			jQuery.getJSON("http://127.0.0.1:8080/course/yyhSchedulingRule/SchedulingRuleVo/1", function(data) {
+				vm.SchedulingRuleVo1 = data;
+			});
+			jQuery.getJSON("http://127.0.0.1:8080/course/yyhSchedulingRule/SchedulingRuleVo/0", function(data) {
+				vm.SchedulingRuleVo2 = data;
+			});
+			$("#joinAM").click(function() {
+				var box = document.getElementsByName('classes');
+				var json_classes = new Array();
+				for(var i = 0; i < box.length; i++) {
+					if(box[i].checked) {
+						var classes = {};
+						classes["title"] = box[i].title;
+						classes["id"] = box[i].id;
+						classes["value"] = box[i].value;
+						json_classes.push(classes);
+					}
+				}
+				for(var j = 0; j < json_classes.length; j++) {
+					if(j == 0) {
+						$("#amList").append($("<ul>"));
+					}
+					$("#amList").append($("<li><input type='checkbox' name='classes1' value=" + json_classes[j].value + " title=" + json_classes[j].title + " id=" + json_classes[j].id + " lay-skin='primary'>" + json_classes[j].title + "</li>"));
+					$("#amList").append();
+					if(j == classes.length - 1) {
+						$("#amList").append($("</ul>"));
+					}
+				}
+
+				for(var i = 0; i < box.length; i++) {
+					if(box[i].checked) {
+						box[i].checked = false;
+						box[i].disabled = "disabled";
+						var p = $(box[i]).parent();
+						$(p).css("color", "lightgrey");
+					}
+
+				}
+			})
+
+			function isRepeat(arr) {
+
+				var hash = {};
+
+				for(var i in arr) {
+
+					if(hash[arr[i]])
+
+						return true;
+
+					hash[arr[i]] = true;
+
+				}
+
+				return false;
+
+			}
+
+			jQuery("#xyb1").click(function() {
+				var json1 = {};
+				var teacherId_s = new Array();
+				var box = document.getElementsByName('classes1');
+				for(var i = 0; i < box.length; i++) {
+					id_s[i] = box[i].id;
+					teacherId_s[i] = box[i].value;
+				}
+				json1["Static"] = 1;
+				json1["id"] = id_s;
+				json1["teacherId"] = teacherId_s;
+
+				var json2 = {};
+				var teacherId_s1 = new Array();
+				var box1 = document.getElementsByName('classes2');
+				for(var i = 0; i < box1.length; i++) {
+					id_s1[i] = box1[i].id;
+					teacherId_s1[i] = box1[i].value;
+				}
+				json2["Static"] = 0;
+				json2["id"] = id_s1;
+				json2["teacherId"] = teacherId_s1;
+				var json = {};
+				json["scrvsw"] = json1;
+				json["scrvxw"] = json2;
+				if(isRepeat(json.scrvsw.teacherId)) {
+					layer.alert("上午排课班级已存在排班")
+					return;
+				}
+				if(isRepeat(json.scrvxw.teacherId)) {
+					layer.alert("下午排课班级已存在排班")
+					return;
+				}
+
+				jQuery.ajax({
+					url: "http://127.0.0.1:8080/course/yyhSchedulingRule/ClassInfo",
+					type: "PUT",
+					data: JSON.stringify(json),
+					contentType: "application/json",
+					dataType: "json",
+					success: function(data) {
+						if(data.code == "200") {
+							jQuery("#tab").find(".layui-tab-item").eq(0).removeClass("layui-show row");
+							jQuery("#tab").find(".layui-tab-item").eq(1).addClass("layui-show row");
+							jQuery("#tit").find("li").eq(0).removeClass("layui-this");
+							jQuery("#tit").find("li").eq(1).addClass("layui-this");
+						} else {
+							layer.alert(data.msg);
+						}
+					}
+				});
+
+			});
+
+			$("#joinPM").click(function() {
+				var box = document.getElementsByName('classes');
+				var json_classes = new Array();
+				for(var i = 0; i < box.length; i++) {
+					if(box[i].checked) {
+						var classes = {};
+						classes["title"] = box[i].title;
+						classes["id"] = box[i].id;
+						classes["value"] = box[i].value;
+						json_classes.push(classes);
+					}
+				}
+				for(var j = 0; j < json_classes.length; j++) {
+					if(j == 0) {
+						$("#pmList").append($("<ul>"));
+					}
+					$("#pmList").append($("<li><input type='checkbox' name='classes2' value=" + json_classes[j].value + " title=" + json_classes[j].title + " id=" + json_classes[j].id + " lay-skin='primary'>" + json_classes[j].title + "</li>"));
+					$("#pmList").append();
+					if(j == classes.length - 1) {
+						$("#pmList").append($("</ul>"));
+					}
+				}
+
+				for(var i = 0; i < box.length; i++) {
+					if(box[i].checked) {
+						box[i].checked = false;
+						box[i].disabled = "disabled";
+						var p = $(box[i]).parent();
+						$(p).css("color", "lightgrey");
+					}
+
+				}
+			})
+
+			$("#removeAM").click(function() {
+				var box = $("[name=classes1]");
+				var classesBox = $("[name=classes]");
+				var id = new Array();
+				for(var i = 0; i < box.length; i++) {
+					if(box[i].checked) {
+						id.push(box[i].id);
+						var p = $(box[i]).parent();
+						$(p).remove();
+						for(var j = 0; j < classesBox.length; j++) {
+							if(box[i].title == classesBox[j].title) {
+								$(classesBox[j]).attr("disabled", false);
+								var p = $(classesBox[j]).parent();
+								$(p).css("color", "black");
+							}
+						}
+					}
+				}
+
+				jQuery.ajax({
+					url: "http://127.0.0.1:8080/course/yyhSchedulingRule/updatestBypid/2/" + id,
+					type: "PUT",
+					dataType: "json",
+					success: function(data) {
+						if(data.code) {
+							i1();
+						}
+					}
+				});
+			})
+
+			$("#removePM").click(function() {
+				var box = $("[name=classes2]");
+				var classesBox = $("[name=classes]");
+				var id = new Array();
+				for(var i = 0; i < box.length; i++) {
+					if(box[i].checked) {
+						id.push(box[i].id);
+						var p = $(box[i]).parent();
+						$(p).remove();
+						for(var j = 0; j < classesBox.length; j++) {
+							if(box[i].title == classesBox[j].title) {
+								$(classesBox[j]).attr("disabled", false);
+								var p = $(classesBox[j]).parent();
+								$(p).css("color", "black");
+							}
+						}
+					}
+				}
+
+				jQuery.ajax({
+					url: "http://127.0.0.1:8080/course/yyhSchedulingRule/updatestBypid/2/" + id,
+					type: "PUT",
+					dataType: "json",
+					success: function(data) {
+						if(data.code) {
+							i1();
+						}
+					}
+				});
+			})
+
+		})
+	</script>
+
+</html>

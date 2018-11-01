@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>总课表</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<link rel="stylesheet" href="css/bootstrap.min.css" />
+	<link rel="stylesheet" href="layui/css/layui.css"/>
+	<style>
+		.header1{
+			width: 100%;
+			height:30px;
+			line-height: 30px;
+		}
+		table{
+			text-align: center;
+		}
+		.layui-table th{
+			text-align:center;
+			font-weight: bolder;
+		}
+		.layui-table tr{
+			cursor: pointer;
+		}
+	</style>
+</head>
+<body>
+	<div>
+		<div class="header1" style="background-color: aliceblue;border-top: 1px solid cornflowerblue;border-bottom: 1px solid cornflowerblue;">
+			<span class="layui-icon">&#xe612;</span> 
+			总课表
+		</div>
+		<table class="layui-table" lay-size="sm">
+			<thead>
+				<tr>
+					<th class="th1" rowspan="2">日期</th>
+					<th rowspan="2">星期</th>
+					<th rowspan="2">教室</th>
+					<th colspan="3">上午</th>
+					<th colspan="3">下午</th>
+					<th rowspan="2">机房</th>
+				</tr>
+				<tr>
+					<th>班级</th>
+					<th>教员</th>
+					<th>课程</th>
+					<th>班级</th>
+					<th>教员</th>
+					<th>课程</th>
+				</tr>
+			</thead>
+			<tbody>
+				
+			</tbody>
+		</table>
+	</div>
+</body>
+<script type="text/javascript" src="js/jquery-1.12.4.js" ></script>
+<script type="text/javascript" src="js/bootstrap.min.js" ></script>
+<script type="text/javascript" src="layui/layui.js"></script>
+<script type="text/javascript">
+	
+	$(function(){
+		loadTimetable();
+		
+	});
+	
+	function loadTimetable(){
+		
+		$.getJSON("http://localhost:8080/course/timetable/nextWeekTimetable",function(data){
+			
+			var tbody = $("tbody").empty();	
+			$.each(data,function(i,obj){
+				var tr = null;
+				if(i%39 == 0){
+					tr = $("<tr><td rowspan=39>"+obj.date+"</td><td rowspan=39>"+obj.week+"</td><td>"+obj.classRoomNameAM+"</td><td>"+obj.classNameAM+"</td><td>"+obj.teacherNameAM+"</td><td>"+obj.courseNameAM+"</td><td>"+obj.classNamePM+"</td><td>"+obj.teacherNamePM+"</td><td>"+obj.courseNamePM+"</td><td>"+obj.classRoomNamePM+"</td></tr>");
+				}else{
+					tr = $("<tr><td>"+obj.classRoomNameAM+"</td><td>"+obj.classNameAM+"</td><td>"+obj.teacherNameAM+"</td><td>"+obj.courseNameAM+"</td><td>"+obj.classNamePM+"</td><td>"+obj.teacherNamePM+"</td><td>"+obj.courseNamePM+"</td><td>"+obj.classRoomNamePM+"</td></tr>");
+				}
+				tbody.append(tr);
+			})
+			
+			
+		});
+		
+	}
+	
+</script>
+</html>

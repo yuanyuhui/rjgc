@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" href="css/bootstrap.min.css" />
+		<link rel="stylesheet" href="layui/css/layui.css" media="all" />
+		<style>
+			.da {
+				margin-top: -30px;
+				height: 70px;
+				display: flex;
+				justify-content: space-between;
+				border: #000000 solid 0px;
+			} 
+			.zong {
+				display: flex;
+				justify-content: flex-end;
+				border: #000000 solid 0px;
+			}
+			
+			.zong2 {
+				margin-top: 20px;
+				margin-left: -70px;
+			}
+			
+			.er {
+				width: 300px;
+			}
+			
+			.san {
+				margin-top: -10px;
+				display: flex;
+				flex-direction: row;
+				justify-content: flex-end;
+				flex-wrap: wrap;
+				height: auto;
+			}
+			
+			.yi {
+				height: auto;
+				border: 0px solid gray;
+				display: flex;
+				justify-content: flex-start;
+				margin-top: 30px;
+			}
+			
+			.zhong {
+				text-align: center;
+				line-height: 40px;
+			}
+			
+			.layui-unselect {
+				width: 70px;
+			}
+			
+			.layui-input-block {
+				margin-left: 0px;
+			}
+			
+			.AAAAA {
+				line-height: 35px;
+				height: 40px;
+				border: 0px solid red;
+				background-color: #B1D2EC
+			}
+			
+			.AOP {
+				line-height: 35px;
+				height: 40px;
+				border: 0px solid red;
+				background-color: #B1D2EC
+			}
+			
+			.WW {
+				margin-left: 50px;
+				margin-top: 30px;
+				display: flex;
+			}
+			
+			.WWW {
+				margin-left: 50px;
+				margin-top: 10px;
+				display: flex;
+				margin-bottom: 20px;
+			}
+			
+			.KKK {
+				height: 40px;
+				line-height: 40px;
+				width: 40px;
+				margin-left: 20px;
+			}
+			
+			.layui-form-item .layui-inline {
+				margin-bottom: 5px;
+				margin-right: -10px;
+			}
+			
+			.layui-table td,
+			.layui-table th {
+				line-height: 10px;
+			}
+			
+			.ZZZ {
+				margin-left: 20px;
+			}
+			
+			.pp {
+				margin-right: 20px;
+				margin-left: -10px;
+				margin-top: 10px;
+			}
+			
+			.zhong-1 {
+				margin-left: 10px;
+			}
+			
+			.layui-input-block {
+				margin-right: 10px;
+				margin-left: 10px;
+			}
+			
+			.juzhong {
+				margin-left: 290px;
+				margin-top: -33px;
+			}
+			
+			.layui-unselect {
+				height: 28px;
+				margin-top: 5px;
+			}
+			
+			.layui-input {
+				height: 28px;
+				margin-top: 5px;
+			}
+			
+			.cha:hover {
+				cursor: pointer;
+				color: cornflowerblue;
+			}
+			
+			.kuan {
+				margin-right: 340px;
+				margin-top: -33px;
+				margin-left: 90px;
+			}
+		</style>
+	</head>
+
+	<body>
+
+		<div class="AAAAA">
+			<i class="layui-icon" style="color: #007DDB;">&#xe66f;</i> 教务信息列表
+		</div>
+		<div class="da">
+			<div class="zong">
+
+				<div class="yi">
+					<div class="pp">
+						<a href="javascript:showWindowDialog('addEducational.html','添加教务信息');">
+							<button class="layui-btn layui-btn-xs ZZZ"><i class="layui-icon" style="color: gold;">&#xe654;</i>增加</button>
+						</a>
+					</div>
+
+					<div class="pp">
+						<button class="layui-btn layui-btn-xs ZZZ" id="dialog"><i class="layui-icon" style="color:gold;">&#xe642;</i>编辑</button>
+					</div>
+
+					<div class="pp">
+						<button class="layui-btn layui-btn-xs ZZZ" id="shan"><i class="layui-icon" style="color:gold;">&#xe640;</i>刪除</button>
+					</div>
+					<form class="layui-form">
+				</div>
+
+			</div>
+
+		</div>
+		</div>
+		<div class="san">
+
+			<table class="layui-table" id="table">
+				<thead>
+					<tr>
+						<th>
+							<input type="checkbox" name="" lay-skin="primary" id="quan">
+						</th>
+						<th>姓名</th>
+						<th style="width: 15%;">入职时间</th>
+						<th style="width: 15%;">性别</th>
+						<th style="width: 15%;">电话</th>
+						<th style="width: 25%;">地址</th>
+					</tr>
+				</thead>
+				<tbody id="tbody">
+					<tr v-for="(obj,index) in grade">
+						<td>
+							<input type="checkbox" lay-skin="primary" name="xuan">
+						</td>
+						<td style="display: none" v-text="obj.id"></td>
+						<td v-text="obj.name"></td>
+						<td v-text="obj.inDate"></td>
+						<td v-text="obj.sex"></td>
+						<td v-text="obj.phone"></td>
+						<td v-text="obj.address"></td>
+					</tr>
+				</tbody>
+			</table>
+
+			<div id="test100"></div>
+		</div>
+		</form>
+
+		<div id="windowDialog" class="modal fade" data-backdrop="static" data-keyboard="false">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header" data-code="">
+						<button class="close" data-dismiss="modal">&times;</button>
+						<h4 class="modal-title">模块提示</h4>
+					</div>
+					<div class="modal-body"></div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script src="layui/layui.js"></script>
+	<script src="layui/lay/modules/form.js"></script>
+	<script src="js/jquery-1.12.4.js"></script>
+	<script src="js/t3.js"></script>
+	<script src="js/vue.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="js/Dialog.js"></script>
+	<script>
+		jQuery(function() {
+			fnGotoPage(1, 1);
+			var pageInfo;
+
+			function fnGotoPage(n, s) {
+				var vm = new Vue({
+					el: "#table",
+					data: {
+						grade: []
+					},
+					created: function() {
+						$.getJSON("http://localhost:8080/course/educational/educational/1/10", function(data) {
+							vm.grade = data.list;
+						});
+					}
+				})
+			}
+			$("#dialog").click(function() {
+				var code = $("[name=xuan]:checked").parents("tr").find("td:eq(1)").text();
+				if (code == "") {
+					alert("请选择用户！")
+				} else {
+					showWindowDialogCode("updateEducational.html", "编辑教务信息", code);
+				}
+			});
+			$('#windowDialog').on('hide.bs.modal', function() {
+				//alert(123);
+				fnGotoPage(1, 1);
+			})
+			$("#quan").click(function() {
+				var zt = $("#quan").prop("checked");
+				$("[name=xuan]").attr("checked", zt);
+			});
+			$("#shan").click(function() {
+				var ch = $("[name=xuan]:checked");
+				var arr = new Array();
+				$.each(ch, function(i, obj) {
+					arr.push($(obj).parents("tr").find("td:eq(1)").text());
+				});
+				$.ajax("http://localhost:8080/course/educational/educational", {
+					type: "delete",
+					dataType: "json",
+					data: JSON.stringify(arr),
+					contentType: "application/json",
+					success: function(data) {
+						if (data.code == 200) {
+							location.reload();
+							alert("刪除成功！");
+						}
+					}
+				})
+			});
+			layui.use('layer', function() {
+				$(".cha").click(function() {
+					layer.open({
+						type: 1,
+						skin: 'layui-layer-rim', //加上边框
+						area: ['420px', '240px'], //宽高
+						content: '<label>教务简介</label><textarea name="" required lay-verify="required" placeholder="教员简介" class="layui-textarea" disabled></textarea>'
+					});
+				});
+			});
+			layui.use('laypage', function() {
+				var laypage = layui.laypage;
+				//执行一个laypage实例
+				laypage.render({
+					elem: 'test100' //注意，这里的 test1 是 ID，不用加 # 号
+						,
+					count: 50 //数据总数，从服务端得到
+				});
+			});
+		});
+	</script>
+
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>添加班主任信息</title>
+		<link rel="stylesheet" href="css/bootstrap.min.css" />
+
+	</head>
+	<style>
+		body {
+			width: 900px;
+		}
+	</style>
+
+	<body>
+		<div class="layui-container">
+			<div class="layui-row">
+				<form class="form-horizontal">
+					<div class="form-group">
+						<label for="inputEmail3" class="col-sm-2 control-label">姓名</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" name="name" placeholder="请输入姓名">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="inputEmail3" class="col-sm-2 control-label">密码</label>
+						<div class="col-sm-10">
+							<input type="password" class="form-control" name="pwd" value="" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="inputEmail3" class="col-sm-2 control-label">性別</label>
+						<div class="col-sm-10">
+							<input type="radio" class="radio-inline" name="sex" value="男"> 男
+							<input type="radio" class="radio-inline" name="sex" value="男"> 女
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="inputEmail3" class="col-sm-2 control-label">身份证</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" name="identityCard" placeholder="请输入身份证">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="inputEmail3" class="col-sm-2 control-label">电话</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" name="phone" placeholder="请输入电话">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="inputEmail3" class="col-sm-2 control-label">地址</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" name="address" placeholder="请输入地址">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="inputEmail3" class="col-sm-2 control-label">描述</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" name="description">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="inputEmail3" class="col-sm-2 control-label">所带班级</label>
+						<div class="col-sm-10">
+							<input type="button" class="btn btn-default" value="选择班级" id="xzbj">
+							<label class="classinfo"></label>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+							<button type="button" onclick="tj()" class="btn btn-default">提 交</button>
+							<button type="reset" class="btn btn-default">重 置</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</body>
+	<script src="layui/layui.js"></script>
+	<script src="layui/lay/modules/form.js"></script>
+	<script src="js/jquery-1.12.4.js"></script>
+	<script>
+		jQuery("#xzbj").click(function() {
+			layer.open({
+				type: 2,
+				title: ['班级选择', 'font-size:18px;'],
+				content: 'selectclass.html',
+				area: ['600px', '300px'],
+				skin: 'demo-class',
+				anim: 5,
+				maxmin: true,
+				end: function() {
+					jQuery(".classinfo").html(JSON.parse(window.sessionStorage.getItem("classinfo")));
+				}
+			});
+		});
+
+		var json = {};
+
+		var json_classinfo = {};
+
+		/**
+		 * 提交
+		 */
+		function tj() {
+			json["name"] = jQuery("[name=name]").val();
+			json["sex"] = jQuery("[name=sex]").val();
+			json["identityCard"] = jQuery("[name=identityCard]").val();
+			json["phone"] = jQuery("[name=phone]").val();
+			json["pwd"] = jQuery("[name=pwd]").val();
+			json["address"] = jQuery("[name=address]").val();
+			json["isLocked"] = 0;
+			json["description"] = jQuery("[name=description]").val();
+			var classinfo = jQuery(".classinfo").html();
+			json_classinfo["id"] = classinfo;
+			json["classif_id"] = json_classinfo;
+			console.log(json)
+			$.ajax({
+				url: "http://127.0.0.1:8080/course/yyh/TeacherVo",
+				type: "POST",
+				data: JSON.stringify(json),
+				contentType: "application/json",
+				dataType: "json",
+				success: function(data) {
+					layer.alert(data.msg);
+					if(data.code == "200") {
+						var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+						parent.layer.close(index); //再执行关闭
+					}
+				}
+			});
+		}
+	</script>
+
+</html>

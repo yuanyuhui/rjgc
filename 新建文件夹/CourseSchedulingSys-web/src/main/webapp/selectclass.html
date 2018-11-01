@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>班级选择</title>
+		<link rel="stylesheet" href="layui/css/layui.css" />
+	</head>
+
+	<body>
+		<div class="layui-container">
+			<div class="layui-row">
+				<table class="layui-table" id="vmclassInfo">
+					<tbody v-for="(temp,index) in classInfo">
+						<tr v-if="temp.periodId==1">
+							<th>
+								s1
+							</th>
+							<th>
+								<input type="checkbox" name="classInfo" lay-skin="primary" lay-filter="allChoose" style="width: 30px;" v-text="temp.id" />{{temp.name}}
+							</th>
+						</tr>
+						<tr v-if="temp.periodId==2">
+							<th>
+								s2
+							</th>
+							<th>
+								<input type="checkbox" name="classInfo" lay-skin="primary" lay-filter="allChoose" style="width: 30px;" v-text="temp.id" />{{temp.name}}
+							</th>
+						</tr>
+						<tr v-if="temp.periodId==3">
+							<th>
+								y2
+							</th>
+							<th>
+								<input type="checkbox" name="classInfo" lay-skin="primary" lay-filter="allChoose" style="width: 30px;" v-text="temp.id" />{{temp.name}}
+							</th>
+						</tr>
+					</tbody>
+					<footer>
+						<tr>
+							<th colspan="2" style="text-align: right;">
+								<input type="button" class="layui-btn" id="qr" value="确定选择" />
+								<input type="button" class="layui-btn" id="qx" value="取消选择" />
+							</th>
+						</tr>
+					</footer>
+				</table>
+			</div>
+		</div>
+	</body>
+	<script src="js/jquery-1.12.4.js"></script>
+	<script src="layui/layui.js"></script>
+	<script type="text/javascript" src="js/vue.js"></script>
+	<script>
+		var vm = new Vue({
+			el: "#vmclassInfo",
+			data: {
+				classInfo: []
+			}
+		});
+
+		jQuery.getJSON("http://127.0.0.1:8080/course/yyh/classInfo", function(data) {
+			vm.classInfo = data;
+		});
+
+		jQuery("#qr").click(function() {
+			var classInfo = "";
+			var objNameList = jQuery("[type=checkbox]");
+			if(null != objNameList) {
+				for(var i = 0; i < objNameList.length; i++) {
+					if(objNameList[i].checked) {
+						classInfo += objNameList[i].textContent + ",";
+					}
+				}
+			}
+			window.sessionStorage.setItem("classinfo", JSON.stringify(classInfo));
+			var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+			parent.layer.close(index); //再执行关闭
+		});
+
+		jQuery("#qx").click(function() {
+			var objNameList = jQuery("[type=checkbox]");
+			if(null != objNameList) {
+				for(var i = 0; i < objNameList.length; i++) {
+					objNameList[i].checked = "";
+				}
+			}
+			window.sessionStorage.removeItem("classinfo");
+			var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+			parent.layer.close(index); //再执行关闭
+		});
+	</script>
+
+</html>

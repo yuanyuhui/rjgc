@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>个人信息管理</title>
+		<link rel="stylesheet" type="text/css" href="layui/css/layui.css" />
+
+	</head>
+
+	<body>
+		<div style="margin-left: 80px;margin-top: 50px;width: 600px;">
+			<form class="layui-form" layui-filter="myform">
+				<div class="user_left">
+					<div class="layui-form-item">
+						<label class="layui-form-label">用户名</label>
+						<div class="layui-input-block">
+							<input type="text" id="name" value="陈某人" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">级别</label>
+						<div class="layui-input-block">
+							<input type="text" id="role" value="学生" disabled class="layui-input layui-disabled">
+						</div>
+					</div>
+
+					<div class="layui-form-item" pane="">
+						<label class="layui-form-label">性别</label>
+						<div class="layui-input-block">
+							<input type="radio" class="sex" name="sex" value="男" title="男">
+							<input type="radio" class="sex" name="sex" value="女" title="女">
+						
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">手机号码</label>
+						<div class="layui-input-block">
+							<input type="tel" id="ipone" value="" placeholder="请输入手机号码" lay-verify="required|phone" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">入职日期</label>
+						<div class="layui-input-block">
+							<input type="tel" value="" placeholder="请输入入职日期 " id="indate" class="layui-input">
+							<!--lay-verify="required|date" -->
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">家庭住址</label>
+						<div class="layui-input-block">
+							<input type="tel" id="address" value="" placeholder="家庭住址" lay-verify="required|addph" class="layui-input">
+						</div>
+					</div>
+
+					<div class="layui-form-item" style="margin-left: 5%;">
+						<div class="layui-input-block">
+							<button class="layui-btn" id="submit" lay-submit="" lay-filter="changeUser">立即提交</button>
+							<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+						</div>
+					</div>
+			</form>
+			</div>
+	</body>
+	<script src="js/jquery-1.12.4.js"></script>
+	<script src="layui/layui.all.js"></script>
+	<script src="js/vue.js"></script>
+	<script>
+		var form;
+		$(function() {
+			var user = JSON.parse(sessionStorage.getItem("user"));
+			console.log(user);
+			queryUser(user.name);
+
+		})
+		/*查询日期*/
+		layui.use(['laydate', 'form'], function() {
+			var laydate = layui.laydate;
+			form = layui.form;
+
+			//执行一个laydate实例
+			laydate.render({
+				elem: '#time' //指定元素
+					,
+				format: 'yyyy年MM月dd日'
+			});
+		});
+
+		var user = new Vue({
+			el: '.user_left',
+			data: {
+				user: []
+			}
+		});
+		var pm;
+		var name = "";
+		$("#submit").click(function() {
+			var user = {};
+			var name =$("#name").val();
+			var sex = $("input[name=sex]:checked").val();
+			var phone = $("#ipone").val();
+			var inDate = $("#indate").val();
+			var address = $("#address").val();
+			user["name"] = name;
+			user["sex"] = sex;
+			user["phone"] = phone;
+			user["inDate"] = inDate;
+			user["address"] = address;
+			$.ajax("http://localhost:8080/course/hyh/updateById", {
+				type: 'put',
+				"dataType": "json",
+				"timeout": 4000,
+				"data": JSON.stringify(user),
+				"contentType": "application/json",
+				"success": function(json) {
+					if(json.code == 200) {
+						alert("修改成功");
+					}
+				}
+			});
+		});
+
+		function queryUser(name) {
+			$.ajax({
+				type: 'GET',
+				url: 'http://localhost:8080/course/hyh/queryById/' + name,
+				dataType: 'json',
+				async: true, //这里设置为同步执行，目的是等数据加载完再调用layui分页组件，不然分页组件拿不到totalCount的值
+				success: function(json) {
+					pm = json;
+					$("#name").val(pm.name);
+					jQuery.each(json.role, function(e, b) {
+						$("#role").val(b.name);
+					});
+					var sexs = pm.sex;
+
+					if(sexs == "男") {
+						$("[name=sex]").eq(0).attr("checked", "checked");
+					} else if(sexs == "女") {
+						$("[name=sex]").eq(1).attr("checked", "checked");
+					} 
+
+					
+					$("#ipone").val(pm.phone);
+					$("#indate").val(pm.inDate);
+					$("#address").val(pm.address);
+					form.render('radio');
+				}
+			});
+		}
+
+		var pm2;
+
+		function updateUser(id) {
+			$.ajax({
+				type: 'GET',
+				url: 'http://localhost:8080/course/hyh/updateById/' + pm.name,
+				dataType: 'json',
+				async: true,
+				success: function(json) {
+					pm2 = json;
+					if($("[name=sex]").val() == "男") {
+						pm2.sex = "男";
+					} else if($("[name=sex]").val() == "女") {
+						pm2.sex = "女";
+					}  
+					pm2.phone = $("#ipone").val();
+					pm2.inDate = $("#indate").val();
+					pm2.address = $("#address").val();
+					alert("修改成功!")
+				}
+			});
+
+		};
+	</script>
+
+</html>

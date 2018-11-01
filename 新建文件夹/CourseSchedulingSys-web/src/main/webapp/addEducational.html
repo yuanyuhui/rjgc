@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" href="css/bootstrap.min.css" />
+		<!--<link rel="stylesheet" href="layui/css/layui.css" media="all">-->
+
+	</head>
+
+	<body>
+		<form class="form-horizontal" id="yfrom">
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">姓名</label>
+				<div class="col-sm-10">
+					<input type="text" id="uname" class="form-control" style="width: 20%;"></input>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">性別</label>
+				<div class="col-sm-10">
+					<input type="radio" name="ra" value="男" checked="checked"/>男
+					<input type="radio" name="ra" value="女" />女
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">电话</label>
+				<div class="col-sm-10">
+					<input type="text" id="uphone" class="form-control" style="width: 20%;" >
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">身份证</label>
+				<div class="col-sm-10">
+					<input type="text" id="uidentityCard" class="form-control" style="width: 40%;" >
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">地址</label>
+				<div class="col-sm-10">
+					<input type="text" id="uaddress" class="form-control" style="width: 40%;" >
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="inputPassword3" class="col-sm-2 control-label">教务简介</label>
+				<div class="col-sm-10">
+					<textarea id="userText" class="form-control" rows="8" placeholder="" ></textarea>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-10">
+					<button type="button" id="bc" class="btn btn-default" data-dismiss="modal">保存</button>
+					<button class="btn btn-default" data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</form>
+	</body>
+	<script src="js/jquery-1.12.4.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script>
+		$(function(){
+			$("#bc").click(function(){
+				var json = {
+						"name" : $("#uname").val(),
+						"roleId":4,
+						"sex":$("[name=ra]:checked").val(),
+						"phone":$("#uphone").val(),
+						"identityCard":$("#uidentityCard").val(),
+						"address":$("#uaddress").val(),
+						"description":$("#userText").val()
+					};
+					console.log(JSON.stringify(json));
+					$.ajax("http://localhost:8080/course/educational/educational", {
+						type : "post",
+						dataType : "json",
+						contentType : "application/json",
+						data : JSON.stringify(json),
+						success : function(data) {
+							console.log(data);
+							if(data.code==200){
+								alert("保存成功！");
+								location.reload();//重新加载页面
+							}
+						}
+					});
+			})
+		});
+		
+	</script>
+</html>

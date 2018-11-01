@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+	<!-- 设置角色权限 -->
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" href="css/bootstrap.min.css" />
+		<link rel="stylesheet" href="layui/css/layui.css" media="all">
+
+	</head>
+
+	<body>
+		<form class="form-horizontal" id="yfrom">
+			<table class="layui-table">
+				<thead>
+					<tr>
+						<th width='20px'>
+							<input type='checkbox' id="allbox">
+						</th>
+						<th>模块编号</th>
+						<th>模块名称</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr v-for="(obj,index) in grade">
+						<td>
+							<input type='checkbox' name="abox" :data-id="obj.id">
+						</td>
+						<td v-text="obj.id"></td>
+						<td v-text="obj.name"></td>
+					</tr>
+				</tbody>
+			</table>
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-10">
+					<button type="button" id="newbc" class="btn btn-default" data-dismiss="modal">保存</button>
+					<button class="btn btn-default" data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</form>
+	</body>
+	<script src="layui/layui.all.js"></script>
+	<script src="js/jquery-1.12.4.js"></script>
+	<script src="js/vue.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script>
+		$(function() {
+			var code = $(".modal-header").attr("data-code");
+			//alert(code);
+			var vm = new Vue({
+				el: "#yfrom",
+				data: {
+					grade: []
+				},
+				created: function() {
+					$.ajax("http://localhost:8080/course/authorit/authorit/function", {
+						type: "get",
+						dataType: "json",
+						success: function(data) {
+							vm.grade = data;
+						}
+					})
+				}
+			});
+			$("#newbc").click(function() {
+				var ch = $("[name=abox]:checked");
+				var arr = new Array();
+				arr.push(code);
+				$.each(ch, function(i, obj) {
+					arr.push($(obj).parents("tr").find("td:eq(1)").text());
+				});
+				console.log(JSON.stringify(arr));
+				$.ajax("http://localhost:8080/course/authorit/authorit/function", {
+					type: "delete",
+					dataType: "json",
+					contentType: "application/json",
+					data: JSON.stringify(arr),
+					success: function(json) {
+						console.log(JSON.stringify(json));
+						if (json.code == 200) {
+							alert("保存成功！");
+							location.reload();
+						}
+					}
+				});
+			});
+			//复选框选中
+			aa();
+			function aa(){
+				$.ajax("http://localhost:8080/course/authorit/authorit/raf/" + code, {
+					type: "get",
+					dataType: "json",
+					success: function(datas){
+						var ch = $("[name='abox']");
+						$.each(ch, function(i, obx) {
+							var cbox=$(obx).parents("tr").find("td:eq(1)").text();
+							$.each(datas,function(i, ob) {
+								if (cbox == ob.functionId) {
+									$(obx).attr("checked", "checked");
+								}
+							});
+						})
+					}
+				});
+			}			
+			//{//等下要删{}
+			/*var ar = new Array();
+			
+			$.each(ca, function(i, obx) {
+					ar.push($(obx).parents("tr").find("td:eq(1)").text());
+					$.each(vm.grades, function(i, ob) {
+						if (cbox == ob.functionId) {
+							$(obx).attr("checked", "checked");
+						}
+					});
+				})
+			}*/
+		});
+		$("#allbox").click(function() {
+			var zt = $("#allbox").prop("checked");
+			$("[name=abox]").attr("checked", zt);
+		});
+		
+		
+	</script>
+
+</html>

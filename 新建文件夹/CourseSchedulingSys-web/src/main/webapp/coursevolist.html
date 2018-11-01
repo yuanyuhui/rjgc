@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>书本详细信息</title>
+		<link rel="stylesheet" type="text/css" href="layui/css/layui.css" media="all" />
+		<link rel="stylesheet" href="css/bootstrap.min.css" />
+
+		<style>
+			.da {
+				margin-top: -30px;
+				height: 70px;
+				display: flex;
+				justify-content: space-between;
+				border: #000000 solid 0px;
+			}
+			
+			.zong {
+				display: flex;
+				justify-content: flex-end;
+				border: #000000 solid 0px;
+			}
+			
+			.zong2 {
+				margin-top: 20px;
+				margin-left: -70px;
+			}
+			
+			.er {
+				width: 300px;
+			}
+			
+			.san {
+				margin-top: -10px;
+				display: flex;
+				flex-direction: row;
+				justify-content: flex-end;
+				flex-wrap: wrap;
+				height: auto;
+			}
+			
+			.yi {
+				height: auto;
+				border: 0px solid gray;
+				display: flex;
+				justify-content: flex-start;
+				margin-top: 10px;
+				/*background-color: #E6E6E6;*/
+			}
+			
+			.zhong {
+				text-align: center;
+				line-height: 40px;
+			}
+			
+			.layui-unselect {
+				width: 70px;
+			}
+			
+			.layui-input-block {
+				margin-left: 0px;
+			}
+			
+			.AAAAA {
+				line-height: 35px;
+				height: 40px;
+				border: 0px solid red;
+				background-color: #B1D2EC
+			}
+			
+			.AOP {
+				line-height: 35px;
+				height: 40px;
+				border: 0px solid red;
+				background-color: #B1D2EC
+			}
+			
+			.WW {
+				margin-left: 50px;
+				margin-top: 30px;
+				display: flex;
+			}
+			
+			.WWW {
+				margin-left: 50px;
+				margin-top: 10px;
+				display: flex;
+				margin-bottom: 20px;
+			}
+			
+			.KKK {
+				height: 40px;
+				line-height: 40px;
+				width: 100px;
+				margin-left: 20px;
+				margin-right: 20px;
+			}
+			
+			.layui-form-item .layui-inline {
+				margin-bottom: 5px;
+				margin-right: -10px;
+			}
+			
+			.ZZZ {
+				margin-left: 20px;
+			}
+			
+			.pp {
+				margin-right: 20px;
+				margin-left: -10px;
+				margin-top: 10px;
+			}
+			
+			input[type=checkbox] {
+				width: 1px;
+			}
+			
+			#allChoose {
+				width: 30px;
+			}
+			
+			[name=fy] {
+				width: 30px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="layuui-container">
+			<table class="layui-table">
+				<thead>
+					<div class="yi">
+						<div class="pp" onclick="tjj()"><button class="layui-btn layui-btn-xs ZZZ"><i class="layui-icon" style="color:gold;">&#xe654;</i>增加</button></div>
+
+						<div class="pp" onclick="compile()"><button class="layui-btn layui-btn-xs ZZZ"><i class="layui-icon" style="color:gold;">&#xe642;</i>编辑</button></div>
+
+						<div class="pp" id="sc"><button class="layui-btn layui-btn-xs ZZZ" onclick="deletechecklis()"><i class="layui-icon" style="color:gold;">&#xe615;</i>删除</button></div>
+					</div>
+				</thead>
+				<thead>
+					<tr>
+						<th><input type="checkbox" name="checkbox1" onclick="checkboxed1('checkbox1')" lay-skin="primary" lay-filter="allChoose" id="allChoose"></th>
+						<th>年级编号</th>
+						<th>课程名称</th>
+						<th>课程简称</th>
+						<th>课时数</th>
+					</tr>
+				</thead>
+				<form>
+					<tbody id="vmCourse1">
+						<tr v-for="(temp,index) in Course1">
+							<th><input type="checkbox" name="checkbox1" lay-skin="primary" lay-filter="allChoose" id="allChoose" v-bind:value="temp.zid" /></th>
+							<th name="zid" style="display: none;">{{temp.zid}}</th>
+							<th v-if="temp.periodId==1" name="periodId" periodId="1">S1</th>
+							<th v-if="temp.periodId==2" name="periodId" periodId="2">S2</th>
+							<th v-if="temp.periodId==3" name="periodId" periodId="3">Y2</th>
+							<th>{{temp.name}}</th>
+							<th>{{temp.simpleName}}</th>
+							<th>{{temp.courseCount}}</th>
+							<th style="display: none;" name="parentId">{{temp.parentId}}</th>
+						</tr>
+					</tbody>
+				</form>
+			</table>
+		</div>
+	</body>
+	<script src="layui/layui.js"></script>
+	<script src="layui/lay/modules/form.js"></script>
+	<script src="js/jquery-1.12.4.js"></script>
+	<script type="text/javascript" src="js/vue.js"></script>
+	<script>
+		jQuery(document).ajaxError(function() {
+			layer.alert("服务器异常!");
+		});
+
+		function checkboxed1(objName) {
+			var objNameList = document.getElementsByName(objName);
+			if(null != objNameList) {
+				if(objNameList[0].checked) {
+					for(var i = 0; i < objNameList.length; i++) {
+						objNameList[i].checked = "checked";
+					}
+				} else {
+					for(var i = 0; i < objNameList.length; i++) {
+						objNameList[i].checked = "";
+					}
+				}
+			}
+		}
+
+		function compile() {
+			var objNameList = jQuery("[type=checkbox]");
+			var num = 0;
+			if(null != objNameList) {
+				for(var i = 1; i < objNameList.length; i++) {
+					if(objNameList[i].checked) {
+						num++;
+					}
+				}
+				if(num > 1) {
+					layer.alert("不能同时编辑多个信息！");
+					return;
+				} else if(num < 1) {
+					layer.alert("请选择");
+					return;
+				} else {
+					for(var i = 1; i < objNameList.length; i++) {
+						if(objNameList[i].checked) {
+							window.sessionStorage.setItem("zzid", objNameList[i].value)
+						}
+					}
+					layer.open({
+						type: 2,
+						title: ['编辑课程信息', 'font-size:18px;'],
+						content: 'updatecorsevo.html',
+						area: ['500px', '500px'],
+						skin: 'demo-class',
+						anim: 5,
+						maxmin: true,
+						end: function() {
+							pagination();
+						}
+					});
+				}
+			}
+		}
+
+		function deletechecklis() {
+			var objNameList = jQuery("[type=checkbox]");
+			var num = 0;
+			for(var i = 1; i < objNameList.length; i++) {
+					if(objNameList[i].checked) {
+						num++;
+					}
+				}
+			if(num<1){
+				layer.alert("请选择!");
+				return;
+			}
+			
+			layer.confirm('是否确认删除?', function(index) {
+				jQuery.ajax({
+					url: "http://127.0.0.1:8080/course/yyhCourse/CourseVo2/" + id,
+					type: "delete",
+					dataType: "json",
+					success: function(data) {
+						if(data.code == "200") {
+							layer.alert(data.msg);
+							var objNameList = jQuery("[name=checkbox1]");
+							if(null != objNameList) {
+								for(var i = 1; i < objNameList.length; i++) {
+									if(objNameList[i].checked) {
+										jQuery(objNameList[i]).parent().parent().remove();
+									}
+								}
+							}
+						}
+					}
+				});
+			})
+			var id = [];
+			var para = jQuery("[name=checkbox1]").serializeArray();
+			jQuery.each(para, function(e, b) {
+				id.push(b.value);
+			});
+		}
+
+		jQuery("#zj").click(function() {
+			layer.open({
+				type: 2,
+				title: ['添加课程信息', 'font-size:18px;'],
+				content: 'addcorsevo.html',
+				area: ['500px', '550px'],
+				skin: 'demo-class',
+				anim: 5,
+				maxmin: true,
+				end: function() {
+					pagination();
+				}
+			});
+		});
+
+		/**
+		 * vue模板数据渲染
+		 */
+		var vm = new Vue({
+			el: "#vmCourse1",
+			data: {
+				Course1: []
+			}
+		});
+		pagination();
+
+		function pagination() {
+			jQuery.getJSON("http://127.0.0.1:8080/course/yyhCourse/Course/"+window.sessionStorage.getItem("zid"),function(data){
+				vm.Course1=data;
+			});
+		};
+
+		function tjj() {
+			layer.open({
+				type: 2,
+				title: ['新增课程信息', 'font-size:18px;'],
+				content: 'addcorsevo.html',
+				area: ['500px', '500px'],
+				skin: 'demo-class',
+				anim: 5,
+				maxmin: true,
+				end: function() {
+					var json = JSON.parse(window.sessionStorage.getItem("corsevos"));
+					json["periodId"] = window.sessionStorage.getItem("periodId");
+					json["parentId"] = window.sessionStorage.getItem("zid");
+					jQuery.ajax({
+						url: "http://127.0.0.1:8080/course/yyhCourse/CourseVo2",
+						type: "POST",
+						data: JSON.stringify(json),
+						contentType: "application/json",
+						dataType: "json",
+						success: function(data) {
+							layer.alert(data.msg);
+							if(data.code == "200") {
+								pagination();
+							}
+						}
+					});
+				}
+			});
+		}
+	</script>
+
+</html>

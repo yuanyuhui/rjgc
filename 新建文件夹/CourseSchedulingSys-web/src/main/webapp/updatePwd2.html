@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="layui/css/layui.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+		<div style="margin-left: 80px;margin-top: 50px;width: 600px;">
+			<form class="layui-form" action="">
+				<div class="layui-form-item">
+					<label class="layui-form-label">原密码</label>
+					<div class="layui-input-inline">
+						<input id="pwd" type="password" name="password" required lay-verify="required" placeholder="请输入原密码" autocomplete="off" class="layui-input">
+					</div>
+					<div class="layui-form-mid layui-word-aux" ><span id="pwdtext">请输入密码</span></div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">新密码</label>
+					<div class="layui-input-inline">
+						<input id="newPwd"  type="password" name="password" required lay-verify="required" placeholder="请输入原密码" autocomplete="off" class="layui-input">
+					</div>
+					<div class="layui-form-mid layui-word-aux"><span id="pwdtext2">请输入密码</span> </div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">再次输入</label>
+					<div class="layui-input-inline">
+						<input id="newPwd2" type="password" name="password" required lay-verify="required" placeholder="请输入原密码" autocomplete="off" class="layui-input">
+					</div>
+					<div class="layui-form-mid layui-word-aux"><span id="pwdtext3">请输入密码</span></div>
+				</div>
+				<div class="layui-form-item" style="margin-left: 5%;">
+					<div class="layui-input-block">
+						<button class="layui-btn" id="submit" lay-submit="" lay-filter="changeUser">立即提交</button>
+						<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</body>
+	<script src="js/jquery-1.12.4.js"></script>
+	<script src="layui/layui.js"></script>
+	<script>
+		$("#pwd").mouseout(function() {
+			var pwd = $("#pwd").val();
+			var name = "吴彦祖";
+			var user = {};
+			user["name"] = name;
+			user["pwd"] = pwd;
+			if(pwd==""){
+					$("#pwdtext").html("密码不能为空").css("color", "red");
+			}else {
+				$.ajax("http://localhost:8080/course-api/hyh/findPwd/" + user.name + "/+" + user.pwd, {
+					"type": 'GET',
+					"dataType": "json",
+					"timeout": 4000,
+					"success": function(json) {
+						if(json.code == "200") {
+							$("#pwdtext").html(json.msg).css("color", "greenyellow");
+						} else if(json.code == "500") {
+							$("#pwdtext").html(json.msg).css("color", "red");
+						}
+					}
+				});			
+			}
+			
+		});
+		
+			
+		$("#newPwd").mouseout(function(){
+			var pwd = $("#pwd").val();
+			var newPwd=$("#newPwd").val();
+			if(newPwd==""){
+					$("#pwdtext2").html("密码不能为空").css("color", "red");
+			}else{
+				if(pwd==newPwd){
+					$("#pwdtext2").html("新密码不能与旧密码相同").css("color", "red");
+				} else{
+					$("#pwdtext2").html("密码可用").css("color", "greenyellow");
+				}
+			}					
+		});
+				
+		$("#newPwd2").mouseout(function(){
+			var newPwd=$("#newPwd").val();
+			var newPwd2=$("#newPwd2").val();
+			if(newPwd2==""){
+				$("#pwdtext3").html("密码不能为空").css("color", "red");
+			}else{
+				if(newPwd==newPwd2){
+					$("#pwdtext3").html("密码可用").css("color", "greenyellow");
+				}
+				else{
+					$("#pwdtext3").html("2次密码输入不一致").css("color", "red");
+				}
+			}
+		});
+		
+	$("#submit").click(function(){
+		var pwd = $("#pwd").val();
+		var pwd2 =$("#newPwd").val();
+		var pwd3 =$("#newPwd3").val();
+	    if(pwd==""||pwd2==""||pwd3==""){
+	    	$("#pwdtext").html("请将信息输入完整").css("color", "red");
+	    }else{
+    		var pwd =$("#newPwd").val();
+			var name = "吴彦祖";
+			var user = {};
+			user["name"] = name;
+			user["pwd"] = pwd;
+		
+			$.ajax("http://localhost:8080/course-api/hyh/updatePwd", {
+				type: 'put',
+				"dataType": "json",
+				"timeout": 4000,
+				"data": JSON.stringify(user),
+				"contentType": "application/json",
+				"success": function(json) {
+					if(json.code == 200) {
+						alert("修改成功");
+					}else{
+						alert("修改失败");
+					}
+				}
+			});
+		}
+	});
+	</script>
+
+</html>

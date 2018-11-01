@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" href="layui/css/layui.css" />
+	</head>
+
+	<body>
+		<div class="layui-form" >
+			<div class="layui-form-item">
+				<label class="layui-form-label">学期名称：</label>
+				<div class="layui-input-block" style="width: 200px;">
+					<input type="text" name="name" required lay-verify="required" placeholder="请输入名称" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">状态：</label>
+				<div class="layui-input-block">
+					<input type="checkbox" name="switch" lay-skin="switch">
+				</div>
+			</div>
+			<div class="layui-form-item" style="margin-top: 10px;">
+				<div class="layui-input-block">
+					<button class="layui-btn layui-btn-radius layui-btn-normal layui-btn-xs" id="tj">添加</button>
+					<button class="layui-btn layui-btn-radius layui-btn-normal layui-btn-xs" id="cz">重置</button>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="layui/layui.all.js"></script>
+	<script type="text/javascript" src="js/jquery-1.12.4.js"></script>
+	<script type="text/javascript">
+		$(function() {
+			$("#cz").click(function() {
+				$("[name=name]").val('');
+			});
+			
+			$("#tj").click(function(){
+				var state;
+				if($("[name=switch]").is(":checked")){
+					state=1;
+				}else{
+					state=0;
+				}
+				var name=$("[name=name]").val();
+				p=new Object();
+				p.name=name;
+				p.state=state;
+				$.ajax({
+					type: 'POST',
+					url: 'http://127.0.0.1:8080/course/api/zxf',
+					dataType: 'json',
+					data: JSON.stringify(p),
+					contentType: 'application/json',
+					success: function(data) {
+						if(data.code == "200") {
+							layer.open({
+								title: '提示',
+								content: '新增成功！'
+							});
+							
+							setTimeout(function() {
+								var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+								parent.layer.close(index); // 关闭layer 
+								window.parent.location.reload(); //刷新父页面
+							},500);
+							
+						}
+					}
+				});
+				
+			});
+			
+			
+			
+		});
+	</script>
+
+</html>

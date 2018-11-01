@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<title>班主任课表</title>
+		<link rel="stylesheet" href="layui/css/layui.css">
+		
+		<style>
+			#head {
+				display: flex;
+			}
+			
+			#title {
+				padding-top: 10px;
+			}
+			
+			#Teachertitle {
+				margin-top: 10px;
+				margin-bottom: 10px;
+			}
+			/*设置文本居中*/
+			
+			table * {
+				text-align: center;
+			}
+			.dian:hover {
+				cursor: pointer;
+				color: black;
+				text-decoration: underline;
+			}
+			.dian{
+				position:relative;
+				left:4px;
+				top:7px;
+			}
+			.btn {
+				background-color: lightseagreen;
+				color: white;
+			}
+			
+		</style>
+	</head>
+
+	<body>
+		<div class="layui-fluid">
+			<div id="head">
+				<div id="title">
+					班级：
+				</div>
+				<div class="layui-container">
+					<form class="layui-form" action="" class="layui-row">
+						<div class="layui-col-md2">
+							<select name="city" lay-verify="" id="classId">
+								<option value="">请选择一个班级</option>
+							</select>
+						</div>
+						
+						<div class="layui-inline layui-col-md1 layui-col-md-offset1">
+							<input type="text" class="layui-input" id="begin">
+						</div>
+						<div class="layui-col-md1" style="text-align:center;margin-top: 5px;">~</div>
+						<div class="layui-inline layui-col-md1">
+							<input type="text" class="layui-input" id="end">
+						</div>
+						<div class="juzhong">
+							<a class="dian" href="javascript:void(0)"><i class="layui-icon" style="color:skyblue; font-size: 25px;margin-left:5px;">&#xe615;</i></a>
+						</div>
+					</form>
+
+				</div>
+
+			</div>
+			<div id="Teachertitle" class="layui-row">
+				<div class="layui-col-md3">
+					<i class="layui-icon layui-icon-username"></i> 班主任课表
+				</div>
+
+			</div>
+			<!--表格-->
+			<div id="vmt">
+				<table class="layui-table">
+					<thead>
+						<tr>
+						<th rowspan="2">日期</th>
+						<th rowspan="2">星期</th>
+						<th rowspan="2">教室</th>
+						<th colspan="3">上午</th>
+						<th colspan="3">下午</th>
+						<th rowspan="2">机房</th>
+					</tr>
+					<tr>
+						<th>班级</th>
+						<th>教员</th>
+						<th>课程</th>
+						<th>班级</th>
+						<th>教员</th>
+						<th>课程</th>
+					</tr>
+					</thead>
+					<tbody id="tbody">
+						<tr v-for="(temp,index) in courses">
+							<td v-text="dateFormat(temp.date)"></td>
+							<td v-text="temp.week"></td>
+							<td v-text="temp.classRoomNameAM"></td>
+							<td v-text="temp.classNameAM"></td>
+							<td v-text="temp.teacherNameAM"></td>
+							<td v-text="temp.courseNameAM"></td>
+							<td v-text="temp.classNamePM"></td>
+							<td v-text="temp.teacherNamePM"></td>
+							<td v-text="temp.courseNamePM"></td>
+							<td v-text="temp.classRoomNamePM"></td>
+						</tr>
+
+					</tbody>
+				</table>
+				
+				<div id="test100"></div>
+			</div>
+			
+		</div>
+		<!-- 
+			<div style="position:relative;top:-40px;left:1000px">
+				<a href="javascript:void(0);">
+					<button class="btn" >
+						<span class="layui-icon">&#xe605;</span>
+							确认课表
+					</button>
+				</a>
+				
+			</div>
+		 -->
+		
+		
+	</body>
+	<script src="layui/layui.js"></script>
+	<script src="layui/lay/modules/form.js"></script>
+	<script src="js/jquery-1.12.4.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="js/vue.js"></script>
+	<script>
+	
+		
+		var totalCount;    //总分页数
+		var page;
+		var myLayer;
+		
+		jQuery(function() {
+			$.ajax({
+				type : "GET",
+				dataType : "json",
+				url: '/course/courses/getClassName/KQ-YG-20170601027',
+				success: function(data) {
+					$.each(data,function(i,obj){
+						$("#classId").append("<option value='"+obj.name+"'>"+obj.name+"</option>");
+					})
+				}
+			});
+			var vm = new Vue({
+				el: "#vmt",
+				data: {
+					courses: []
+				},
+				created: function(e) {
+					var vm = this;
+					jQuery.getJSON("http://localhost:8080/course/courses/getClassTable/KQ-YG-20170601027/null/null/null/1/10", function(data) {
+						vm.courses = data.list;
+						totalCount = data.total;
+					});
+				},
+				methods:{
+					dateFormat:function(time) {
+					    var date=new Date(time);
+					    var year=date.getFullYear();
+					    /* 在日期格式中，月份是从0开始的，因此要加0
+					     * 使用三元表达式在小于10的前面加0，以达到格式统一  如 09:11:05
+					     * */
+					    var month= date.getMonth()+1<10 ? "0"+(date.getMonth()+1) : date.getMonth()+1;
+					    var day=date.getDate()<10 ? "0"+date.getDate() : date.getDate();
+					    var hours=date.getHours()<10 ? "0"+date.getHours() : date.getHours();
+					    var minutes=date.getMinutes()<10 ? "0"+date.getMinutes() : date.getMinutes();
+					    var seconds=date.getSeconds()<10 ? "0"+date.getSeconds() : date.getSeconds();
+					    // 拼接
+					    return year+"-"+month+"-"+day;
+					}
+
+				}
+			});
+			
+			layui.use(['form','laypage','layer'], function() {
+				var laypage = layui.laypage;
+				var form = layui.form;
+				myLayer = layui.layer;
+
+				//执行一个laypage实例
+				laypage.render({
+					elem: 'test100',
+					count: totalCount,
+					limit: 10,
+					layout: ['count', 'prev', 'page', 'next', 'limit', 'skip'],
+					jump: function(obj, first) {
+						getPageData(obj.curr, obj.limit);
+					}
+				});
+				
+				
+				jQuery(".dian").click(function(e) {
+					getPageData(1, 10);
+				});
+
+
+				
+				function getPageData(pageNum, pageSize) {
+					var cName=$.trim($("#classId").val());
+					var startDate=$("#begin").val();
+					var endDate=$("#end").val();
+					if(cName==""||cName.length==0){
+						cName=null;
+					}
+					if(startDate==""||startDate.length==0){
+						startDate=null;
+					}
+					if(endDate==""||endDate.length==0){
+						endDate=null;
+					}
+					
+					jQuery.getJSON("http://localhost:8080/course/courses/getClassTable/KQ-YG-20170601027/" + cName + "/" + startDate + "/"+endDate +"/"+ pageNum + "/" + pageSize, function(data) {
+						vm.courses = data.list;
+						paged(data);
+					});
+				}
+
+				function paged(data) {
+					layui.use('laypage', function() {
+						var laypage = layui.laypage;
+						//执行一个laypage实例
+						laypage.render({
+							elem: 'test100',
+							count: data.total,
+							limit: 10,
+							curr:data.pageNum,
+							layout: ['count', 'prev', 'page', 'next', 'skip'],
+							jump: function(obj, first) {
+								if(!first){
+									getPageData(obj.curr, obj.limit);
+								}
+							}
+						});
+					});
+				}
+
+
+
+			
+		})
+			
+			
+			
+			
+			layui.use('laydate', function() {
+				var laydate = layui.laydate;
+
+				//执行一个laydate实例
+				laydate.render({
+					elem: '#begin' //指定元素
+				});
+				laydate.render({
+					elem: '#end' //指定元素
+				});
+			});
+		})
+	</script>
+
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>编辑书本信息</title>
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="layui/css/layui.css" />
+	</head>
+	<style>
+		body {
+			width: 900px;
+		}
+		/*ul li{
+			list-style-type: none;
+		}*/
+		
+		ol {
+			list-style-type: none;
+			counter-reset: sectioncounter;
+		}
+		
+		ol li:before {
+			font-family: "微软雅黑";
+			content: counter(sectioncounter) ".";
+			counter-increment: sectioncounter;
+		}
+	</style>
+
+	<body>
+		<form class="form-horizontal">
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label"><h3>书本信息</h3></label>
+			</div>
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">书本名称</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" name="name" placeholder="请输入课程名称">
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">书本简称</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" name="simpleName" value="" placeholder="请输入课程简称" />
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">年级编号</label>
+				<div class="col-sm-10">
+					<select class="layui-select-disabled" name="periodId">
+						<option value="">请选择</option>
+						<option value="1">S1</option>
+						<option value="2">S2</option>
+						<option value="3">y2</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-10 text-right">
+					<input type="button" class="btn btn-default" onclick="tj()" value="确认修改" />
+					<input type="reset" class="btn btn-default" value="重置" />
+				</div>
+			</div>
+		</form>
+
+	</body>
+	<script src="layui/layui.js"></script>
+	<script src="layui/lay/modules/form.js"></script>
+	<script src="js/jquery-1.12.4.js"></script>
+	<script>
+		jQuery(function() {
+			jQuery.getJSON("http://127.0.0.1:8080/course/yyhCourse/CourseVo2/" + window.sessionStorage.getItem("zzzid"), function(data) {
+				var name = jQuery("[name=name]").val(data.name);
+				var simpleName = jQuery("[name=simpleName]").val(data.simpleName);
+				var periodId = jQuery("[name=periodId]").val(data.periodId);
+			});
+		});
+
+		function tj() {
+			var json = {};
+			var name = jQuery("[name=name]").val();
+			var simpleName = jQuery("[name=simpleName]").val();
+			var periodId = jQuery("[name=periodId]").val();
+			json["name"] = name;
+			json["zid"] = window.sessionStorage.getItem("zzzid");
+			json["simpleName"] = simpleName;
+			json["periodId"] = periodId;
+			console.log(json)
+			jQuery.ajax({
+				url: "http://127.0.0.1:8080/course/yyhCourse/CourseVo2",
+				type: "PUT",
+				data: JSON.stringify(json),
+				contentType: "application/json",
+				dataType: "json",
+				success: function(data) {
+					layer.alert(data.msg);
+					if(data.code == "200") {
+						window.setTimeout(function() {
+							var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+							parent.layer.close(index); //再执行关闭
+						},1000);
+					}
+				}
+			});
+		}
+	</script>
+
+</html>

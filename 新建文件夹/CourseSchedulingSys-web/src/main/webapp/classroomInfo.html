@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8" />
+<title>教室机房管理</title>
+<link rel="stylesheet" href="layui/css/layui.css" media="all">
+<link rel="stylesheet" href="layui/css/layui.mobile.css">
+<link rel="stylesheet" href="layui/css/modules/code.css" />
+<link rel="stylesheet"
+	href="layui/css/modules/laydate/default/laydate.css" />
+<link rel="stylesheet" href="layui/css/modules/layer/default/layer.css" />
+</head>
+<style type="text/css">
+.AAAAA {
+	line-height: 35px;
+	height: 40px;
+	border: 0px solid red;
+	background-color: #B1D2EC
+}
+</style>
+
+<body>
+	<!-- 	<form class="layui-form" action="" style="display: flex;">
+		<div class="layui-form-item"
+			style="width: 200px; margin-right: -100px;">
+			<label class="layui-form-label">筛选条件</label>
+			<div class="layui-input-block">
+				<select name="city" lay-verify="required">
+					<option value="">请选择</option>
+					<option value="0">教室</option>
+					<option value="1">编号</option>
+					<option value="2">广州</option>
+					<option value="3">深圳</option>
+					<option value="4">杭州</option>
+				</select>
+			</div>
+		</div>
+
+		<div class="layui-form-item"
+			style="width: 500px; margin-right: -100px;">
+			<div class="layui-input-block">
+				<input type="text" name="title" required lay-verify="required"
+					placeholder="支持模糊查询" autocomplete="off" class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item" style="margin-top: 10px;">
+			<div class="layui-input-block">
+				<button
+					class="layui-btn layui-btn-radius layui-btn-normal layui-btn-xs"
+					id="tab">查询</button>
+			</div>
+		</div>
+	</form> -->
+	<div class="AAAAA">
+		<i class="layui-icon" style="color: #007DDB;">&#xe66f;</i> 教室机房管理
+	</div>
+	<div style="margin-top: 20px;">
+		<div class="layui-btn-group">
+			<button
+				class="layui-btn layui-btn-radius layui-btn-normal layui-btn-xs"
+				id="xz">增加</button>
+			<button
+				class="layui-btn layui-btn-radius layui-btn-normal layui-btn-xs"
+				id="bj">编辑</button>
+			<button id="sc"
+				class="layui-btn layui-btn-radius layui-btn-normal layui-btn-xs"
+				id="tab">删除</button>
+		</div>
+
+		<table class="layui-table">
+
+			<thead>
+				<tr>
+					<th><input type="checkbox" id="zong"></th>
+					<th>编号</th>
+					<th>名称</th>
+				</tr>
+			</thead>
+			<tbody id="tdb">
+				<tr v-for="(obj,index) in room">
+					<td><input type="checkbox" v-bind:value="obj.id"
+						class="checkbox" name="sss"></td>
+					<td v-text="obj.id"></td>
+					<td v-text="obj.name"></td>
+				</tr>
+				<!-- <tr>
+					<td><input type="checkbox" value='2' name="sss"></td>
+					<td>1</td>
+					<td>name</td>
+				</tr>
+				<tr>
+					<td><input type="checkbox" value='3' name="sss"></td>
+					<td>1</td>
+					<td>name</td>
+				</tr>
+				<tr>
+					<td><input type="checkbox" value='4' name="sss"></td>
+					<td>1</td>
+					<td>name</td>
+				</tr>
+				<tr>
+					<td><input type="checkbox" value='5' name="sss"></td>
+					<td>1</td>
+					<td>name</td>
+				</tr>
+				<tr>
+					<td><input type="checkbox" value='6' name="sss"></td>
+					<td>1</td>
+					<td>name</td>
+				</tr> -->
+			</tbody>
+		</table>
+
+		<div id="test1" style="text-align: right;"></div>
+	</div>
+
+</body>
+<script src="layui/layui.js"></script>
+<script type="text/javascript" src="js/jquery-1.12.4.js"></script>
+<script type="text/javascript" src="js/vue.js"></script>
+<script type="text/javascript">
+	//初始化vm模型渲染数据
+	var vm = new Vue({
+		el : "#tdb",
+		data : {
+			room : []
+		}
+	});
+
+	/*layui分页*/
+	layui.use('laypage', function() {
+		var laypage = layui.laypage;
+
+		laypage.render({
+			elem : 'test1',
+			count : count,
+			layout : [ 'count', 'prev', 'page', 'next', 'limit', 'refresh',
+					'skip' ],
+			jump : function(obj, first) {
+				//点击非第一页页码时的处理逻辑。比如这里调用了ajax方法，异步获取分页数据
+				if (!first) {
+					console.log(obj.curr);
+					pageInfoShow(obj.curr, obj.limit); //第二个参数不能用变量pageSize，因为当切换每页大小的时候会出问题
+					$("[type=checkbox]").each(function() {
+						$(this).prop("checked", false);
+					});
+				}
+			}
+		});
+	});
+	var page = 1; //当前页数
+	var size = 10; //每页显示条数
+	var count = 0; //总页数
+	pageInfoShow(page, size);
+
+	function pageInfoShow(page, size) {
+		$.ajax({
+			type : "GET",
+			url : "/course/api/rooms/" + page + " / " + size,
+			dataType : 'json',
+			async : false, //这里设置为同步执行，目的是等数据加载完再调用layui分页组件，不然分页组件拿不到totalCount的值
+			success : function(json) {
+				vm.room = json.list;
+				count = json.total;
+			}
+		});
+	}
+
+	$(function() {
+
+		$("#xz").click(function() {
+			layer.open({
+				type : 2,
+				title : '新增教室信息',
+				maxmin : true,
+				shadeClose : true, //点击遮罩关闭层
+				area : [ '460px', '460px' ],
+				content : 'jsadd.html',
+				end : function() {
+					window.location.reload();
+				}
+			});
+		});
+
+		$("#bj").click(function() {
+			if (!$("input[name='sss']").is(":checked")) {
+				layer.msg("请选择需要编辑的内容！");
+				return;
+			}
+			var objNameList = jQuery("[type=checkbox]");
+			var num = 0;
+			if (null != objNameList) {
+				for (var i = 1; i < objNameList.length; i++) {
+					if (objNameList[i].checked) {
+						num++;
+					}
+				}
+				if (num > 1) {
+					layer.msg("不能同时编辑两个教室！");
+					return;
+				}
+			}
+			var ClassroomId = $("input[name='sss']:checked").val();
+			window.sessionStorage.setItem("ClassroomId", ClassroomId);
+			layer.open({
+				type : 2,
+				title : '编辑教室信息',
+				maxmin : true,
+				fixed : true,
+				shadeClose : true, //点击遮罩关闭层
+				area : [ '460px', '460px' ],
+				content : 'jsbj.html',
+				end : function() {
+					window.location.reload();
+				}
+			});
+		});
+
+		//删除
+		$("#sc").click(function() {
+			var id = [];
+			for (var i = 0; i < $(".checkbox").length; i++) {
+				if ($(".checkbox").eq(i).prop("checked")) {
+					id.push($(".checkbox").eq(i).val());
+				}
+			}
+			if (!$("input[name='sss']").is(":checked")) {
+				layer.msg("请选择要删除的内容！");
+				return;
+			}
+			layer.confirm('确认删除本条记录吗?', {
+				btn : [ '是', '否' ],
+				btn1 : function() {
+					$.getJSON("/course/api/del", {
+						"id[]" : id
+					}, function(json) {
+						if (json.code == 200) {
+							layer.msg("删除成功");
+						}
+						+setTimeout(function() {
+							window.location.reload(); //刷新页面
+						}, 1000);
+					});
+				},
+				btn2 : function() {
+					layer.msg("已取消");
+				}
+			})
+		});
+	})
+</script>
+
+<script>
+	$("#zong").change(function() {
+		var obj = $("input[name='sss']");
+		var num = obj.length;
+		for (var k = 0; k < num; k++) {
+			if ($("#zong").is(":checked")) {
+				obj.eq(k).prop("checked", true);
+			} else {
+				obj.eq(k).prop("checked", false);
+			}
+		}
+	});
+	//Demo
+	layui.use('form', function() {
+		var form = layui.form;
+
+		//监听提交
+		form.on('submit(formDemo)', function(data) {
+			layer.msg(JSON.stringify(data.field));
+			return false;
+		});
+	});
+</script>
+
+</html>

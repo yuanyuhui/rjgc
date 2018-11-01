@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" href="css/bootstrap.min.css" />
+		<link rel="stylesheet" href="layui/css/layui.css" media="all" />
+		<style>
+			.da {
+				margin-top: -30px;
+				height: 70px;
+				display: flex;
+				justify-content: space-between;
+				border: #000000 solid 0px;
+			}
+			
+			.zong {
+				display: flex;
+				justify-content: flex-end;
+				border: #000000 solid 0px;
+			}
+			
+			.zong2 {
+				margin-top: 20px;
+				margin-left: -70px;
+			}
+			
+			.er {
+				width: 300px;
+			}
+			
+			.san {
+				margin-top: -10px;
+				display: flex;
+				flex-direction: row;
+				justify-content: flex-end;
+				flex-wrap: wrap;
+				height: auto;
+			}
+			
+			.yi {
+				height: auto;
+				border: 0px solid gray;
+				display: flex;
+				justify-content: flex-start;
+				margin-top: 30px;
+			}
+			
+			.zhong {
+				text-align: center;
+				line-height: 40px;
+			}
+			
+			.layui-unselect {
+				width: 70px;
+			}
+			
+			.layui-input-block {
+				margin-left: 0px;
+			}
+			
+			.AAAAA {
+				line-height: 35px;
+				height: 40px;
+				border: 0px solid red;
+				background-color: #B1D2EC
+			}
+			
+			.AOP {
+				line-height: 35px;
+				height: 40px;
+				border: 0px solid red;
+				background-color: #B1D2EC
+			}
+			
+			.WW {
+				margin-left: 50px;
+				margin-top: 30px;
+				display: flex;
+			}
+			
+			.WWW {
+				margin-left: 50px;
+				margin-top: 10px;
+				display: flex;
+				margin-bottom: 20px;
+			}
+			
+			.KKK {
+				height: 40px;
+				line-height: 40px;
+				width: 40px;
+				margin-left: 20px;
+			}
+			
+			.layui-form-item .layui-inline {
+				margin-bottom: 5px;
+				margin-right: -10px;
+			}
+			
+			.layui-table td,
+			.layui-table th {
+				line-height: 10px;
+			}
+			
+			.ZZZ {
+				margin-left: 20px;
+			}
+			
+			.pp {
+				margin-right: 20px;
+				margin-left: -10px;
+				margin-top: 10px;
+			}
+			
+			.zhong-1 {
+				margin-left: 10px;
+			}
+			
+			.layui-input-block {
+				margin-right: 10px;
+				margin-left: 10px;
+			}
+			
+			.juzhong {
+				margin-left: 290px;
+				margin-top: -33px;
+			}
+			
+			.layui-unselect {
+				height: 28px;
+				margin-top: 5px;
+			}
+			
+			.layui-input {
+				height: 28px;
+				margin-top: 5px;
+			}
+			
+			.dian:hover {
+				cursor: pointer;
+				color: cornflowerblue;
+			}
+			
+			.kuan {
+				margin-right: 340px;
+				margin-top: -33px;
+				margin-left: 90px;
+			}
+		</style>
+	</head>
+
+	<body>
+
+		<div class="AAAAA">
+			<i class="layui-icon" style="color: #007DDB;">&#xe66f;</i> 班级信息列表
+		</div>
+		<div class="da">
+			<div class="zong">
+
+				<div class="yi">
+					<div class="pp">
+						<a href="javascript:showWindowDialog('addClassInfoDialog.html','添加班级信息');">
+							<button class="layui-btn layui-btn-xs ZZZ"><i class="layui-icon" style="color:gold;">&#xe654;</i>增加</button>
+						</a>
+					</div>
+
+					<div class="pp">
+						<a href="javascript:void(0)" class="update">
+							<button class="layui-btn layui-btn-xs ZZZ"><i class="layui-icon" style="color:gold;">&#xe642;</i>編輯</button>
+						</a>
+
+					</div>
+
+					<div class="pp"><button class="layui-btn layui-btn-xs ZZZ del" id="shan"><i class="layui-icon" style="color:gold;">&#xe640;</i>刪除</button></div>
+
+					<div class="zhong">
+						筛选条件:
+					</div>
+					<form class="layui-form">
+						<div class="zhong-1">
+							<select name="city" id="term" lay-verify="" style="width: 50px;">
+								<option value="period">学期</option>
+								<option value="major">名称</option>
+							</select>
+
+						</div>
+
+						<div class="layui-input-block kuan">
+							<input type="text" name="title" id="termTxt" placeholder="请输入搜索内容..." autocomplete="off" class="layui-input">
+						</div>
+						<div class="juzhong">
+							<a class="dian" href="#"><i class="layui-icon" style="color:skyblue; font-size: 20px;">&#xe615;</i></a>
+						</div>
+
+				</div>
+
+			</div>
+
+		</div>
+		</div>
+		<div class="san">
+
+			<table class="layui-table">
+				<colgroup>
+					<col width="200">
+					<col width="200">
+					<col>
+				</colgroup>
+				<thead>
+					<tr>
+						<th><input type="checkbox" name="checkbox" onclick="checkboxed('checkbox')" lay-skin="primary" lay-filter="allChoose" id="allChoose"></th>
+						<th>班名</th>
+						<th>学期</th>
+						<th style="width: 15%;">人数</th>
+						<th style="width: 15%;">班主任</th>
+						<th style="width: 15%;">操作</th>
+					</tr>
+				</thead>
+				<tbody id="vmClassInfo">
+						<tr v-for="(temp,index) in classInfo">
+							<td><input :value="temp.id" class="check" type="checkbox" name="checkbox" lay-skin="primary" lay-filter="allChoose" id="allChoose"></td>
+							<td name="gh">{{temp.name}}</td>
+							<td name="xm" :id="temp.periodId">{{temp.periodName}}</td>
+							<td name="xb">{{temp.studentsCount}}</td>
+							<td name="sfz">{{temp.classTeacher}}</td>
+							<td>
+								<a :value="temp.teacherName" class="cha">查看 </a>
+							</td>
+						</tr>
+					</tbody>
+				
+				
+			</table>
+
+			<div id="page"></div>
+		</div>
+		</form>
+	
+	<!-- 窗体模式框 -->
+		<div id="windowDialog" class="modal fade" data-backdrop="static" data-keyboard="false">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button class="close" data-dismiss="modal">&times;</button>
+						<h4 class="modal-title">模块提示</h4>
+					</div>
+					<div class="modal-body"></div>
+				</div>
+			</div>
+		</div>
+
+		<!-- 消息提示框 -->
+		<div id="alertDialog" class="modal fade" data-backdrop="static" data-keyboard="false">
+			<div class="modal-dialog modal-sm">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button class="close" data-dismiss="modal">&times;</button>
+						<h4 class="modal-title">系统提示</h4>
+					</div>
+					<div class="modal-body">
+						<h3 class="text-center">message</h3>
+					</div>
+					<div class="modal-footer" style="text-align: center;">
+						<button class="btn btn-info" data-dismiss="modal">确认</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script src="js/jquery-1.12.4.js"></script>
+	<script src="js/t3.js"></script>
+	<script src="layui/layui.js"></script>
+	<script src="layui/lay/modules/form.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="js/vue.js"></script>
+	<script>
+	
+
+	var totalCount;    //总分页数
+	var page;
+	var myLayer;
+	
+	jQuery(function() {
+		var vm = new Vue({
+			el: "#vmClassInfo",
+			data: {
+				classInfo: []
+			},
+			created: function(e) {
+				var vm = this;
+				jQuery.getJSON("http://localhost:8080/course/courses/getClassInfo/null/null/1/10", function(data) {
+					console.log("vue   "+data.list.length);
+					vm.classInfo = data.list;
+					totalCount = data.total;
+				});
+			}
+		});
+		
+		layui.use(['form','laypage','layer'], function() {
+			var laypage = layui.laypage;
+			var form = layui.form;
+			myLayer = layui.layer;
+
+			//执行一个laypage实例
+			laypage.render({
+				elem: 'page',
+				count: totalCount,
+				limit: 10,
+				layout: ['count', 'prev', 'page', 'next', 'limit', 'skip'],
+				jump: function(obj, first) {
+					getPageData(obj.curr, obj.limit);
+				}
+			});
+		})
+		
+		jQuery(".dian").click(function(e) {
+			getPageData(1, 10);
+		});
+		
+		function getPageData(pageNum, pageSize) {
+			var major='null';  //专业
+			var period='null';   //学期
+			if($("#term").val()=="period"){
+			 	period=$.trim($("#termTxt").val());
+			 	if(period==""){
+					period='null';
+				}
+			}
+			if($("#term").val()=="major"){
+				major=$.trim($("#termTxt").val());
+				if(major==""){
+					major='null';
+				}
+			}
+			
+			jQuery.getJSON("http://localhost:8080/course/courses/getClassInfo/" + period + "/" + major +"/"+ pageNum + "/" + pageSize, function(data) {
+				console.log("page  "+data.list.length);
+				vm.classInfo = data.list;
+				paged(data);
+			});
+		}
+	
+		function paged(data) {
+			layui.use('laypage', function() {
+				var laypage = layui.laypage;
+				//执行一个laypage实例
+				laypage.render({
+					elem: 'page',
+					count: data.total,
+					limit: 10,
+					curr:data.pageNum,
+					layout: ['count', 'prev', 'page', 'next', 'skip'],
+					jump: function(obj, first) {
+						if(!first){
+							getPageData(obj.curr, obj.limit);
+						}
+					}
+				});
+			});
+		}
+		
+		$("#quan").click(function() {
+			var zt = $("#quan").prop("checked");
+			$("[name=xuan]").attr("checked", zt);
+
+		});
+		
+		var rList=[];
+		var studentsCount= new Array();
+		var classStr="";
+		$(document).on("click",".del",function(){
+			var objNameList = $(".check");
+			for(var i=0;i<objNameList.length;i++){
+				if(objNameList[i].checked){
+					rList.push($(objNameList[i]).val());
+					studentsCount.push({count:$(objNameList[i]).parents("td").next().next().next().text()});
+					studentsCount.push({className:$(objNameList[i]).parents("td").next().text()});
+					classStr+=$(objNameList[i]).parents("td").next().text()+",";
+						
+				}
+				
+			}
+			classStr = classStr.substr(0, classStr.length - 1);
+			var flag=true;
+			for(var i=0;i<studentsCount.length;i++){
+				if(studentsCount[i].count==30){
+					flag=false;
+				}
+			}
+				if(confirm("确定要删除吗？")){
+					if(flag){
+							$.ajax("http://127.0.0.1:8080/course/courses/classInfo/remove/"+rList, {
+								"type": "delete",
+								"dataType": "json",
+								"timeout": 4000,
+								"success": function(json) {
+									myLayer.msg("移除成功！");
+								},
+								"error": function(xhr, ms, e) {
+									myLayer.msg(rList[i]+"移除失败！");
+								}
+							});
+							location.reload(true);
+							
+					}else{
+						
+						myLayer.msg("所选班级:"+classStr+"人数不为0，不能进行删除！");
+						classStr="";
+						flag=true;
+					}			
+					
+				}
+			
+		})
+		
+		var num=0;
+		$(document).on("click",".update",function(){
+			var objNameList = $(".check");
+			for(var i=0;i<objNameList.length;i++){
+				if(objNameList[i].checked){
+					window.sessionStorage.setItem("id",$(objNameList[i]).val());
+					window.sessionStorage.setItem("periodId",$(objNameList[i]).parents("td").next().next().attr("id"));
+					num++;
+				}
+			}
+			if(num>1){
+				myLayer.msg("不能同时编辑多个信息！");
+				num=0;
+			}else if(num==0){
+				myLayer.msg("你还没有选中班级信息！");
+			}else{
+				showWindowDialog("updateClassInfo.html","修改班级信息");
+				num=0;
+			}
+			
+		});
+		
+		$(document).on("click",".cha",function(){
+			myLayer.msg("教员信息："+$(this).attr("value"));
+		})
+		
+		
+		
+	})
+	
+	
+	
+	
+	function checkboxed(objName) {
+		var objNameList = document.getElementsByName(objName);
+		if(null != objNameList) {
+			if(objNameList[0].checked) {
+				for(var i = 0; i < objNameList.length; i++) {
+					objNameList[i].checked = "checked";
+				}
+			} else {
+				for(var i = 0; i < objNameList.length; i++) {
+					objNameList[i].checked = "";
+				}
+			}
+		}
+	}
+
+	
+
+	</script>
+
+</html>

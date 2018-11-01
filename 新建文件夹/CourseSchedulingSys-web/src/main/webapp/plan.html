@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>排课计划</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport"
+		content="width=device-width, initial-scale=1, maximum-scale=1">
+	<link rel="stylesheet" href="css/bootstrap.min.css" />
+	<link rel="stylesheet" href="layui/css/layui.css" />
+	<style>
+		.header1 {
+			width: 100%;
+			height: 30px;
+			line-height: 30px;
+		}
+		
+		#header2 {
+			margin-top: 10px;
+		}
+		
+		.modal-body input {
+			display: inline;
+			width: 100px;
+			height: 30px;
+		}
+		
+		.layui-colla-title, .header1 {
+			height: 30px;
+			line-height: 30px;
+			background-color: aliceblue;
+			border-top: 1px solid cornflowerblue;
+			border-bottom: 1px solid cornflowerblue;
+		}
+		
+		.layui-tab-item input, #teacherList input {
+			height: 15px;
+			width: 20px;
+		}
+		
+		.btn {
+			background-color: lightseagreen;
+			color: white;
+		}
+		
+		td {
+			text-align: center;
+		}
+		.className,.teacherName{
+			display:inline-block;
+			width:80px;
+			height:30px;
+		}
+		.hideClassCh,.hideTeacherCh{
+			display:none;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="layui-collapse" id="vmt">
+		<div class="layui-colla-item">
+			<h2 class="layui-colla-title">
+				<span class="layui-icon">&#xe615;</span> 操作
+			</h2>
+			<div id="header2" class="layui-colla-content layui-show"
+				style="padding-left: 10px;">
+				<button class="btn btn-xs" id="createNewPlan">
+					<span class="layui-icon">&#xe642;</span>新建
+				</button>
+				<button class="btn btn-xs" data-toggle="modal" data-target="#ruleListModal" onclick="loadPlanList(1,5)">
+					<span class="layui-icon">&#xe621;</span> 打开
+				</button>
+				<button class="btn btn-xs">
+					<span class="layui-icon">&#xe681;</span> 保存
+				</button>
+				<button class="btn btn-xs" onclick="createPlanModel()">
+					<span class="layui-icon">&#xe605;</span> 处理
+				</button>
+				<button class="btn btn-xs" style="float: right; margin-right: 22%;" id="createTimetable">
+					<span class="layui-icon">&#xe681;</span> 生成课表模板
+				</button>
+				<div style="margin-top: 10px;">
+					计划编号&nbsp;<input type="text" id="planId" class="layui-input" readonly="readonly" style="width: 150px; height: 20px; display: inline;" />&nbsp;&nbsp;
+					计划时间&nbsp; <input type="text" id="drawupTime" class="layui-input" readonly="readonly" style="width: 100px; height: 20px; display: inline;" />&nbsp;&nbsp;
+					计划制定人&nbsp; <input type="text" id="drawupPersonName" class="layui-input" readonly="readonly" style="width: 80px; height: 20px; display: inline;" />&nbsp;&nbsp;
+					状态&nbsp; <input type="text" id="select" class="layui-input" readonly="readonly" placeholder="未确认" style="width: 80px; height: 20px; display: inline;" />&nbsp;&nbsp;
+					全校无课时间&nbsp; <select id="schoolNoTime" name="city" lay-verify="required">
+						<option value="1">星期一</option>
+						<option value="2">星期二</option>
+						<option value="3">星期三</option>
+						<option value="4">星期四</option>
+						<option value="5">星期五</option>
+						<option value="6">星期六</option>
+						<option value="7" selected="selected">星期天</option>
+					</select>
+					&nbsp;&nbsp; 备注&nbsp; <input type="text" class="layui-input" id="remarks" style="width: 200px; height: 20px; display: inline;" />
+				</div>
+			</div>
+
+		</div>
+
+		<div style="margin-top: 10px;">
+			<div class="layui-tab">
+				<ul class="layui-tab-title">
+					<li class="layui-this">班级计划</li>
+					<li>教师计划</li>
+				</ul>
+				<div class="layui-tab-content">
+					<div class="layui-tab-item layui-show">
+						<div class="layui-show" style="margin-top: 10px;">
+							<p>班级 <input type="text" id="classIdBox" lay-verify="required" readonly="readonly" style="width: 60px; height: 20px;" />
+							<input class="easyui-textbox" id="classNameBox" readonly="readonly" style="width: 100px; height: 20px;" />
+								<button id="choiseClassBtn" class="btn btn-xs" data-toggle="modal" data-target="#classes" style="height: 20px;">...</button>
+								&nbsp;&nbsp; 无课时间&nbsp; 
+								<select id="classNoTime">
+									<option value="0">无</option>
+									<option value="1">星期一</option>
+									<option value="2">星期二</option>
+									<option value="3">星期三</option>
+									<option value="4">星期四</option>
+									<option value="5">星期五</option>
+									<option value="6">星期六</option>
+									<option value="7">星期天</option>
+								</select>&nbsp;&nbsp; 排课次数&nbsp; 
+								<select id="classFrequency">
+									<option value="3">3</option>
+									<option value="4">4</option>
+								</select>&nbsp;&nbsp; 优先级&nbsp; 
+								<select  id="classPrior">
+									<option value="5">最高</option>
+									<option value="4">高</option>
+									<option value="3" selected="selected">中</option>
+									<option value="2">低</option>
+									<option value="1">最低</option>
+								</select>(默认：<span style="color: red;">中</span>)&nbsp;&nbsp;
+								<button class="btn btn-xs" style="margin-left: 15%;" onclick="joinPlan()">加入</button>
+								<button class="btn btn-xs" onclick="removePlan()">删除</button>
+							</p>
+						</div>
+						<table class="layui-table" lay-size="sm">
+							<thead>
+								<tr>
+									<th style="text-align: center;" width="10%"><input id="checkAll1" type="checkbox" name="" lay-skin="primary"></th>
+									<th style="text-align: center;" width="10%">编号</th>
+									<th style="text-align: center;" width="45%">班级</th>
+									<th style="text-align: center;" width="15%">无课时间</th>
+									<th style="text-align: center;" width="10%">排课次数</th>
+									<th style="text-align: center;" width="10%">优先级</th>
+								</tr>
+							</thead>
+							<tbody id="classPlanTbody">
+								
+							</tbody>
+						</table>
+					</div>
+					<div class="layui-tab-item">
+						<div class="layui-show" style="margin-top: 10px;">
+							<p>
+								教师 <input type="text" id="teacherIdBox" lay-verify="required" readonly="readonly" style="width: 60px; height: 20px;" />
+								<input class="easyui-textbox" id="teacherNameBox" readonly="readonly" style="width: 100px; height: 20px;" />
+								<button class="btn btn-xs" data-toggle="modal" data-target="#teachers" style="height: 20px;">...</button>
+								&nbsp;&nbsp; 无课时间&nbsp; <select id="teacherNoTime">
+									<option value="0">无</option>
+									<option value="1">星期一</option>
+									<option value="2">星期二</option>
+									<option value="3">星期三</option>
+									<option value="4">星期四</option>
+									<option value="5">星期五</option>
+									<option value="6">星期六</option>
+									<option value="7">星期天</option>
+								</select>&nbsp;&nbsp;
+								<button class="btn btn-xs" style="margin-left: 44%;" onclick="joinTeacherPlan()">加入</button>
+								<button class="btn btn-xs" onclick="removeTeacherPlan()">删除</button>
+							</p>
+						</div>
+						<table class="layui-table" lay-size="sm" style="">
+							<thead>
+								<tr>
+									<th style="text-align: center;" width="10%"><input id="checkAll2" type="checkbox" name="" lay-skin="primary"></th>
+									<th style="text-align: center;" width="70%">教师姓名</th>
+									<th style="text-align: center;" width="20%">无课时间</th>
+								</tr>
+							</thead>
+							<tbody id="teacherPlanTbody">
+									
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+		<!-- 排课计划模态框 -->
+		<div class="modal fade" id="ruleListModal" data-backdrop="static"
+			role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content" style="height:405px;">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						<h5 class="modal-title">排课计划</h5>
+					</div>
+					<div class="modal-body">
+						<input type="text" class="layui-input" placeholder="yyyy-MM-dd" id="test1"> 至
+						 <input type="text" class="layui-input" placeholder="yyyy-MM-dd" id="test2"> 
+						 <input type="text" class="layui-input" id="id"/>
+						<button class="btn btn-xs btn-default" onclick="loadPlanList(1,5)">
+							<span class="layui-icon">&#xe615;</span> 查询
+						</button>
+						<button class="btn btn-xs btn-default" onclick="checkPlan()">
+							<span class="layui-icon">&#xe605;</span> 确定
+						</button>
+						<button class="btn btn-xs btn-default" onclick="deletePlan()">
+							<span class="layui-icon">&#xe640;</span> 删除
+						</button>
+						<table class="layui-table" lay-size="sm" >
+							<thead>
+								<tr>
+									<th style="text-align: center;">选择</th>
+									<th style="text-align: center;">编号</th>
+									<th style="text-align: center;">状态</th>
+									<th style="text-align: center;">编辑人</th>
+									<th style="text-align: center;">编辑时间</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr v-for="(temp,index) in plans">
+									<td><input type="radio" name="planradio" :data-id="temp.id" style="width:16px;height:16px;"></td>
+									<td v-text="temp.id"></td>
+									<td>{{temp.select|changeSelect}}</td>
+									<td v-text="temp.drawupPersonName"></td>
+									<td v-text="dateFormat(temp.drawupTime)"></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="modal-footer" style="padding-right:50px;">
+						<span>第<span id="currPage">1</span>页&nbsp;&nbsp;共<span id="totalCount">0</span>条记录
+						</span>
+						<button class="btn btn-xs" id="firstPage">首页</button>
+						<button class="btn btn-xs" id="prevPage">上一页</button>
+						<button class="btn btn-xs" id="nextPage">下一页</button>
+						<button class="btn btn-xs" id="lastPage">尾页</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- 选择班级模态框 -->
+		<div class="modal fade" id="classes" data-backdrop="static" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content" style="height:280px;">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"
+							aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						<h5 class="modal-title">选择班级</h5>
+					</div>
+					<div class="modal-body">
+						<input type="radio" id="choiseClassOne" style="width: 20px; height: 15px" name="choiceClass" value="多选" checked>多选 
+						<input type="radio" id="choiseClassMany" style="width: 20px; height: 15px" name="choiceClass" value="连续" >连续
+						 <select name="choiseClass" lay-verify="required" disabled="disabled">
+							<option value="0"></option>
+
+						</select>- <select name="choiseClass" lay-verify="required" disabled="disabled">
+							<option value="0"></option>
+							
+						</select>&nbsp;&nbsp;&nbsp;
+						<button class="btn btn-xs" id="addClassDetails">
+							<span class="layui-icon">&#xe605;</span> 确定
+						</button>
+						<input type="checkbox" id="hiddenClassCh" style="display:none;"> 
+						<button class="btn btn-xs" style="float: right; margin-right: 200px;" id="choiseAllClass">
+							<span class="layui-icon">&#xe605;</span> 全选
+						</button>
+						<div class="layui-tab">
+							<ul class="layui-tab-title">
+								<li class="layui-this">S1</li>
+								<li>S2</li>
+								<li>Y2</li>
+							</ul>
+							<div class="layui-tab-content" id="classChoiseContainer">
+								
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+		
+		<!-- 选择教师模态框  -->
+		<div class="modal fade" id="teachers" data-backdrop="static" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content" style="height:280px;">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						<h5 class="modal-title">选择教师</h5>
+					</div>
+					<div class="modal-body">
+						<input type="radio" id="choiseTeacherOne" style="width: 20px; height: 15px" name="choice" value="多选" title="多选" checked>多选
+						<input type="radio" id="choiseTeacherMany" style="width: 20px; height: 15px" name="choice" value="连续" title="连续">连续 
+						<select name="choiseTeacher" lay-verify="required"  disabled="disabled">
+							<option value="0"></option>
+							<option v-for="(temp,index) in teachers" :value="temp.id">{{temp.name}}</option>
+						</select>- <select name="choiseTeacher" lay-verify="required"  disabled="disabled">
+							<option value="0"></option>
+							<option v-for="(temp,index) in teachers" :value="temp.id">{{temp.name}}</option>
+						</select>&nbsp;&nbsp;&nbsp;
+						<button class="btn btn-xs" id="addTeacherDetails">
+							<span class="layui-icon">&#xe605;</span> 确定
+						</button>
+						<input type="checkbox" id="hiddenTeacherCh" style="display:none;"> 
+						<button class="btn btn-xs" style="float: right; margin-right: 200px;" id="choiseAllTeacher">
+							<span class="layui-icon">&#xe605;</span> 全选
+						</button>
+						<div id="teacherList" style="border: 1px solid lightgrey;padding:10px;">
+							<span v-for="(temp,index) in teachers" class="teacherName"><input type="checkbox" name="teacherBox" :value="temp.id" lay-skin="primary" :title="temp.name">{{temp.name}}</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+	</div>
+
+</body>
+<script type="text/javascript" src="js/jquery-1.12.4.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="layui/layui.js"></script>
+<script type="text/javascript" src="js/vue.js"></script>
+<script type="text/javascript" src="js/stringutil.js"></script>
+<script>
+
+	
+	
+	//生成课表模板
+	function createPlanModel(){
+		var planDetails = new Array();
+		var classPlan = $("#classPlanTbody tr");
+		var teacherPlan = $("#teacherPlanTbody tr");
+		for(var i=0;i<classPlan.length;i++){
+			var input = $(classPlan[i]).find("input")[0];
+			var name = $(classPlan[i]).children()[2].innerText;
+			var noTime = createWeekToString($(classPlan[i]).children()[3].innerText);
+			var classFrequency = $(classPlan[i]).children()[4].innerText;
+			var prior = parsePriorToInt($(classPlan[i]).children()[5].innerText);
+			planDetails.push({"classOrTeacherId":$(input).attr("data-classOrTeacherId"),"name":name,"noTime":noTime,"classFrequency":classFrequency,"type":0,"prior":prior});
+		}
+		for(var i=0;i<teacherPlan.length;i++){
+			var input = $(teacherPlan[i]).find("input")[0];
+			var name = $(teacherPlan[i]).children()[1].innerText;
+			var noTime = createWeekToString($(teacherPlan[i]).children()[2].innerText);
+			planDetails.push({"classOrTeacherId":$(input).attr("data-classOrTeacherId"),"name":name,"noTime":noTime,"classFrequency":null,"type":1,"prior":null});
+		}
+		var plan = {
+			"id":$("#planId").val(),
+			"drawupPersonName":$("#drawupPersonName").val(),
+			"drawupTime":new Date(),
+			"noTime":createWeekToString($("#schoolNoTime option:selected").text()),
+			"select":1,
+			"remarks":$("#remarks").val(),
+			"state":2,
+			"detailsList":planDetails
+		};
+		console.log(plan);
+		$.ajax({
+			url:"http://localhost:8080/course/api/addplan",
+			type:"post",
+			data:JSON.stringify(plan),
+			contentType:"application/json",
+			dataType:"json",
+			success:function(data){
+				if(data.code == 200){
+					layer.msg("处理完毕");
+				}else{
+					layer.msg("处理失败");
+				}
+			}
+		});
+		
+	}
+	
+	var planPage;
+	var layer;
+
+	//ajax全局设置
+	$.ajaxSetup({
+		timeout: 60000
+	});
+	$(document).ajaxError(function() {
+		layer.msg('服务器异常');
+	});	
+	
+	//加载layui组件
+	layui.use(['laydate','element','layer'], function() {
+		var laydate = layui.laydate;
+		var laydate2 = layui.laydate;
+		var element = layui.element;
+		layer = layui.layer;
+		
+		laydate.render({
+			elem: '#test1' //指定元素
+		});
+
+		laydate2.render({
+			elem: '#test2' //指定元素
+		});
+	})
+	
+	//创建Vue实例
+	var vm = new Vue({
+		el:"#vmt",
+		data:{
+			plans:[],
+			teachers:[]
+		},filters: {
+			changeSelect: function(val) {
+				if(val == 0) {
+					return '未选中';
+				} else {
+					return '已选中';
+				}
+			}
+		},methods:{
+			dateFormat:function(time) {//转换date为字符串
+			    var date=new Date(time);
+			    var year=date.getFullYear();
+			    var month= date.getMonth()+1<10 ? "0"+(date.getMonth()+1) : date.getMonth()+1;
+			    var day=date.getDate()<10 ? "0"+date.getDate() : date.getDate();
+			    var hours=date.getHours()<10 ? "0"+date.getHours() : date.getHours();
+			    var minutes=date.getMinutes()<10 ? "0"+date.getMinutes() : date.getMinutes();
+			    var seconds=date.getSeconds()<10 ? "0"+date.getSeconds() : date.getSeconds();
+			    return year+"-"+month+"-"+day;
+			}
+		},created:function(e){
+			var vm = this;
+			$.getJSON("http://localhost:8080/course/api/getTeacher",function(data){
+				vm.teachers = data;
+			});
+		}
+	});
+
+	//jQuery窗体加载事件
+	$(function() {
+		
+		$("#createNewPlan").click(function(){
+			 window.location.reload();
+		});
+		
+		$("#createTimetable").click(function(){
+			
+			$.ajax({
+				url:"http://localhost:8080/course/api/createTimetable",
+				type:"post",
+				dataType:"json",
+				success:function(data){
+					if(data.code == 200){
+						var index = layer.load(2, {time: 2*1000});
+						setTimeout(function(){
+							layer.confirm("生成课表完毕，是否前去查看",function(index){
+								window.open("totalTimeTable.html");
+								layer.close(index);
+							},function(index){
+								layer.close(index);
+							});
+						},2000); 
+					}else if(data.code == 201){
+						layer.confirm("下周课表已经生成，是否前去查看？",function(index){
+							window.open("totalTimeTable.html");
+							layer.close(index);
+						},function(index){
+							layer.close(index);
+						});
+					}else{
+						layer.alert("生成课表失败");
+					}
+				}
+			});
+			
+		});
+		
+		$("#checkAll1").click(function() {
+			var classbox = $("[name=checkClassDetails]");
+			for(var i = 0; i < classbox.length; i++) {
+				classbox[i].checked = this.checked;
+			}
+		});
+		
+		$("#checkAll2").click(function() {
+			var teacherbox = $("[name=checkTeacherDetails]");
+			for(var i = 0; i < teacherbox.length; i++) {
+				teacherbox[i].checked = this.checked;
+			}
+		});
+		
+		//分页操作
+		$("#firstPage").click(function(){
+			loadPlanList(1,planPage.pageSize);
+		});
+		
+		$("#lastPage").click(function(){
+			loadPlanList(planPage.lastPage,planPage.pageSize);
+		});
+		
+		$("#prevPage").click(function(){
+			if(planPage.pageNum == 1){
+				layer.msg("已经是第一页了");
+			}else{
+				loadPlanList(planPage.prePage,planPage.pageSize);
+			}
+		});
+			
+		$("#nextPage").click(function(){
+			if(planPage.pageNum == planPage.lastPage){
+				layer.msg("已经是最后一页了");
+			}else{
+				loadPlanList(planPage.nextPage,planPage.pageSize);
+			}
+		});
+		
+		//关闭模态框，清空排课搜索条件
+		$('body').on('hidden.bs.modal', '.modal', function () {
+		     $("#test1").val("");
+		     $("#test2").val("");
+		     $("#id").val("");
+		});
+			
+		//页面加载时填充排课信息
+		loadBehindLogin();
+
+		//多选，连续切换
+		$(document).on("click","#choiseClassOne",function(){
+			$("[name=choiseClass]").attr("disabled",true);
+			$("[name=classes]").attr("disabled",false);
+		});
+		
+		$(document).on("click","#choiseClassMany",function(){
+			$("[name=choiseClass]").attr("disabled",false);
+			$("[name=classes]").attr("disabled","disabled");
+		});
+		
+		$(document).on("click","#choiseTeacherOne",function(){
+			$("[name=choiseTeacher]").attr("disabled",true);
+			$("[name=teacherBox]").attr("disabled",false);
+		});
+		
+		$(document).on("click","#choiseTeacherMany",function(){
+			$("[name=choiseTeacher]").attr("disabled",false);
+			$("[name=teacherBox]").attr("disabled","disabled");
+		});
+		
+		//加载班级信息
+		loadClassInfo();
+		function loadClassInfo(){
+			$.getJSON("http://localhost:8080/course/courses/getClassInfo/null/null/1/100",function(data){
+				var container = $("#classChoiseContainer");
+				for(var i=0;i<3;i++){
+					var div = null;
+					if(i==0){
+						div = $("<div class='layui-tab-item layui-show'></div>");
+					}else{
+						div = $("<div class='layui-tab-item'></div>");
+					}
+					for(var j=0;j<data.list.length;j++){
+						var ch = $("<span class='className'><input type='checkbox' name='classes' title='"+data.list[j].name+"' lay-skin='primary' value='"+data.list[j].id+"''>"+data.list[j].name+"</span>&nbsp;&nbsp;&nbsp;&nbsp;");
+						if(data.list[j].periodId == (i+1)){
+							div.append(ch);
+						}
+					}
+					container.append(div);
+				}
+				var selects = $("[name=choiseClass]");
+				for(var i=0;i<selects.length;i++){
+					for(var j=0;j<data.list.length;j++){
+						$(selects[i]).append("<option value='"+data.list[j].id+"'>"+data.list[j].name+"</option>");
+					}
+				}
+			});
+		}
+		
+		//选择所有班级
+		$("#choiseAllClass").click(function(){
+			var flag = $(this).prev()[0].checked;
+			var classCh = $(".className");
+			for(var i=0;i<classCh.length;i++){
+				if(!$(classCh[i]).hasClass("hideClassCh")){
+					$(classCh[i]).children("[name=classes]")[0].checked = !flag;
+				}
+			}
+			$(this).prev()[0].checked = !flag;
+		});
+		
+		//选择所有教师
+		$("#choiseAllTeacher").click(function(){
+			var flag = $(this).prev()[0].checked;
+			var teacherCh = $(".teacherName");
+			for(var i=0;i<teacherCh.length;i++){
+				if(!$(teacherCh[i]).hasClass("hideTeacherCh")){
+					$(teacherCh[i]).children("[name=teacherBox]")[0].checked = !flag;	
+				}
+			}
+			$(this).prev()[0].checked = !flag;
+		});
+		
+		$("[name=choiseClass]:eq(0)").change(function(){
+			console.log("aaa");
+			
+		});
+		
+		$("[name=choiseClass]:eq(1)").change(function(){
+			var sVal = $("[name=choiseClass]:eq(0)").val();
+			var eVal = $(this).val();
+			if(sVal == 0){
+				console.log("no");
+			}
+		});
+		
+		$("[name=choiseTeacher]:eq(0)").change(function(){
+			console.log("ccc");
+			
+		});
+		
+		$("[name=choiseTeacher]:eq(1)").change(function(){
+			console.log("ddd");
+			
+		});
+		
+		//新增班级计划详情
+		$("#addClassDetails").click(function(){
+			var classContainer = new Array();
+			var idContainer = new Array();
+			var nameContainer = new Array();
+			var classCh = $(".className");
+			var sOptions = $("[name=choiseClass]:eq(0) option");
+			var eOptions = $("[name=choiseClass]:eq(1) option");
+			if($("#choiseClassOne")[0].checked){
+				var classCheck = $("[name=classes]:checked");
+				if(classCheck.length == 0){
+					layer.alert("请选择班级");
+					return;
+				}
+				for(var i=0;i<classCheck.length;i++){
+					classContainer.push({"id":$(classCheck[i]).val(),"name":$(classCheck[i]).attr("title")});
+					idContainer.push($(classCheck[i]).val());
+					nameContainer.push($(classCheck[i]).attr("title"));
+					$(classCheck[i]).parent(".className").addClass("hideClassCh");
+					var val = $(classCheck[i]).val();
+					$(classCheck[i]).attr("checked",false);
+					$("option[value='"+val+"']").hide();
+				}
+			}else if($("#choiseClassMany")[0].checked){
+				var flag = false;
+				var sVal = $("[name=choiseClass]:eq(0)").val();
+				var eVal = $("[name=choiseClass]:eq(1)").val();
+				for(var i=0;i<sOptions.length;i++){
+					if($(sOptions[i]).val() == sVal){
+						flag = true;
+					}
+					if(flag){
+						classContainer.push({"id":$(sOptions[i]).val(),"name":$(sOptions[i]).text()});
+						idContainer.push($(sOptions[i]).val());
+						nameContainer.push($(sOptions[i]).text());
+						$(sOptions[i]).hide();
+						$(eOptions[i]).hide();
+					}
+					if($(sOptions[i]).val() == eVal){
+						flag = false;
+					}
+				}
+				for(var i=0;i<classCh.length;i++){
+					if(idContainer.indexOf($(classCh[i]).children("[name=classes]").val()) != -1){
+						$(classCh[i]).addClass("hideClassCh");
+					}
+				}
+			}
+			$("[name=choiseClass]:eq(0)").val(0);
+			$("[name=choiseClass]:eq(1)").val(0);
+			$("#classIdBox").val(parseListToString(idContainer));
+			$("#classNameBox").val(parseListToString(nameContainer));
+			$('#classes').modal('hide');
+		});
+		
+		//新增教师计划详情
+		$("#addTeacherDetails").click(function(){
+			var teacherContainer = new Array();
+			var idContainer = new Array();
+			var nameContainer = new Array();
+			var teacherCh = $(".teacherName");
+			var sOptions = $("[name=choiseTeacher]:eq(0) option");
+			var eOptions = $("[name=choiseTeacher]:eq(1) option");
+			if($("#choiseTeacherOne")[0].checked){
+				var teacherCheck = $("[name=teacherBox]:checked");
+				if(teacherCheck.length == 0){
+					layer.alert("请选择教师");
+					return;
+				}
+				for(var i=0;i<teacherCheck.length;i++){
+					teacherContainer.push({"id":$(teacherCheck[i]).val(),"name":$(teacherCheck[i]).attr("title")});
+					idContainer.push($(teacherCheck[i]).val());
+					nameContainer.push($(teacherCheck[i]).attr("title"));
+					$(teacherCheck[i]).parent(".teacherName").addClass("hideTeacherCh");
+					var val = $(teacherCheck[i]).val();
+					$(teacherCheck[i]).attr("checked",false);
+					$("option[value='"+val+"']").hide();
+				}
+				
+			}else if($("#choiseTeacherMany")[0].checked){
+				var flag = false;
+				var sVal = $("[name=choiseTeacher]:eq(0)").val();
+				var eVal = $("[name=choiseTeacher]:eq(1)").val();
+				for(var i=0;i<sOptions.length;i++){
+					if($(sOptions[i]).val() == sVal){
+						flag = true;
+					}
+					if(flag){
+						teacherContainer.push({"id":$(sOptions[i]).val(),"name":$(sOptions[i]).text()});
+						idContainer.push($(sOptions[i]).val());
+						nameContainer.push($(sOptions[i]).text());
+						$(sOptions[i]).hide();
+						$(eOptions[i]).hide();
+					}
+					if($(sOptions[i]).val() == eVal){
+						flag = false;
+					}
+				}
+				for(var i=0;i<teacherCh.length;i++){
+					if(idContainer.indexOf($(teacherCh[i]).children("[name=teacherBox]").val()) != -1){
+						$(teacherCh[i]).addClass("hideTeacherCh");
+					}
+				}
+			}
+			$("[name=choiseTeacher]:eq(0)").val(0);
+			$("[name=choiseTeacher]:eq(1)").val(0);
+			$("#teacherIdBox").val(parseListToString(idContainer));
+			$("#teacherNameBox").val(parseListToString(nameContainer));
+			$('#teachers').modal('hide');
+		});
+		
+		//jQuery
+	});
+	
+	
+	//新增教师排课详情
+	function joinTeacherPlan() {
+		var classOrTeacherId = $("#teacherIdBox").val();
+		var name = $("#teacherNameBox").val();
+		//var classFrequency = $("#classFrequency").val();
+		//var prior = parseIntToPrior(parseInt($("#classPrior").val()));
+		var schoolNoTime = parseInt($("#schoolNoTime").val());
+		var teacherNoTime = parseInt($("#teacherNoTime").val());
+		if(classOrTeacherId == ""){
+			layer.alert("请选择教师");
+			return;
+		}
+		if(name == ""){
+			layer.alert("请选择教师");
+			return;
+		}
+		if(teacherNoTime == schoolNoTime){
+			layer.alert("全校无课时间不能与教师无课时间相同");
+			return;
+		}
+		var tempNoTime = "";
+		if(teacherNoTime != 0){
+			if(schoolNoTime > teacherNoTime){
+				tempNoTime += appendIntToWeek(teacherNoTime);
+				tempNoTime += appendIntToWeek(schoolNoTime);
+			}else{
+				tempNoTime += appendIntToWeek(schoolNoTime);
+				tempNoTime += appendIntToWeek(teacherNoTime);
+			}
+		}else{
+			tempNoTime = appendIntToWeek(schoolNoTime);
+		}
+		var index = $("#teacherPlanTbody").children().length;
+		tempNoTime = tempNoTime.substring(0,tempNoTime.length-1);
+		var tr = $("<tr><td><input type='checkbox' name='checkTeacherDetails' lay-skin='primary' data-classOrTeacherId='"+classOrTeacherId+"' ></td><td>"+name+"</td><td>"+tempNoTime+"</td></tr>");
+		$("#teacherPlanTbody").append(tr); 
+		$("#teacherIdBox").val("");
+		$("#teacherNameBox").val("");
+		$("#schoolNoTime").val(7);
+		$("#teacherNoTime").val(0);
+	}
+
+	//删除教师排课详情
+	function removeTeacherPlan() {
+		var teacherCh = $("[name=checkTeacherDetails]:checked");
+		if(teacherCh.length == 0){
+			layer.alert("请选择要删除的项");
+			return;
+		}
+		layer.confirm("确定要删除选中行吗?",function(index){
+			var removeId = new Array();
+			var ids = new Array();
+			for(var i=0;i<teacherCh.length;i++){
+				if($(teacherCh[i]).attr("data-id")){
+					removeId.push($(teacherCh[i]).attr("data-id"));
+				}
+				var idStr = $(teacherCh[i]).attr("data-classOrTeacherId");
+				ids = idStr.split("、");
+				for(var j = 0;j<ids.length;j++){
+					$("[value='"+ids[j]+"']").parents(".teacherName").removeClass("hideTeacherCh");
+					$("option[value='"+ids[j]+"']").show();
+					$("[name=teacherBox][value='"+ids[j]+"']").attr("checked",false);
+				}
+				$(teacherCh[i]).parent().parent().remove();
+				$("#checkAll2").attr("checked",false);
+			}
+			if(removeId.length>0){
+				$.ajax({
+					url:"http://localhost:8080/course/api/deleteDetails",
+					type:"delete",
+					dataType:"json",
+					data:JSON.stringify(removeId),
+					contentType:"application/json",
+					success:function(data){
+						if(data.code == 200){
+							layer.msg("删除排课计划详情成功");
+						}else{
+							layer.msg("删除排课计划详情失败");
+						}
+					}
+				});
+			}
+			layer.close(index);
+		},function(index){
+			layer.close(index);
+			return;
+		});
+
+		
+	}
+	
+	
+	
+	
+
+	//新增班级排课详情
+	function joinPlan() {
+		var classOrTeacherId = $("#classIdBox").val();
+		var name = $("#classNameBox").val();
+		var classFrequency = $("#classFrequency").val();
+		var prior = parseIntToPrior(parseInt($("#classPrior").val()));
+		var schoolNoTime = parseInt($("#schoolNoTime").val());
+		var classNoTime = parseInt($("#classNoTime").val());
+		if(classOrTeacherId == ""){
+			layer.alert("请选择班级");
+			return;
+		}
+		if(name == ""){
+			layer.alert("请选择班级");
+			return;
+		}
+		if(classNoTime == schoolNoTime){
+			layer.alert("全校无课时间不能与班级无课时间相同");
+			return;
+		}
+		var tempNoTime = "";
+		if(classNoTime != 0){
+			if(schoolNoTime > classNoTime){
+				tempNoTime += appendIntToWeek(classNoTime);
+				tempNoTime += appendIntToWeek(schoolNoTime);
+			}else{
+				tempNoTime += appendIntToWeek(schoolNoTime);
+				tempNoTime += appendIntToWeek(classNoTime);
+			}
+		}else{
+			tempNoTime = appendIntToWeek(schoolNoTime);
+		}
+		var index = $("#classPlanTbody").children().length;
+		tempNoTime = tempNoTime.substring(0,tempNoTime.length-1);
+		var tr = $("<tr><td><input type='checkbox' name='checkClassDetails' lay-skin='primary' data-classOrTeacherId='"+classOrTeacherId+"'></td><td>"+(index+1)+"</td><td>"+name+"</td><td>"+tempNoTime+"</td><td>"+classFrequency+"</td><td>"+prior+"</td></tr> ");
+		$("#classPlanTbody").append(tr); 
+		$("#classIdBox").val("");
+		$("#classNameBox").val("");
+		$("#classFrequency").val(3);
+		$("#classPrior").val(3);
+		$("#schoolNoTime").val(7);
+		$("#classNoTime").val(0);
+	}
+
+	//删除班级排课详情
+	function removePlan() {
+		var classCh = $("[name=checkClassDetails]:checked");
+		if(classCh.length == 0){
+			layer.alert("请选择要删除的项");
+			return;
+		}
+		layer.confirm("确定要删除选中行吗?",function(index){
+			var removeId = new Array();
+			var ids = new Array();
+			for(var i=0;i<classCh.length;i++){
+				if($(classCh[i]).attr("data-id")){
+					removeId.push($(classCh[i]).attr("data-id"));
+				}
+				var idStr = $(classCh[i]).attr("data-classOrTeacherId");
+				ids = idStr.split("、");
+				for(var j = 0;j<ids.length;j++){
+					$("[value='"+ids[j]+"']").parents(".className").removeClass("hideClassCh");
+					$("option[value='"+ids[j]+"']").show();
+					$("[name=classes][value='"+ids[j]+"']").attr("checked",false);
+				}
+				$(classCh[i]).parent().parent().remove();
+				$("#checkAll1").attr("checked",false);
+			}
+			if(removeId.length > 0){
+				$.ajax({
+					url:"http://localhost:8080/course/api/deleteDetails",
+					type:"delete",
+					dataType:"json",
+					data:JSON.stringify(removeId),
+					contentType:"application/json",
+					success:function(data){
+						if(data.code == 200){
+							layer.msg("删除排课计划详情成功");
+						}else{
+							layer.msg("删除排课计划详情失败");
+						}
+					}
+				});
+			}
+			layer.close(index);
+		},function(index){
+			layer.close(index);
+			return;
+		});
+	}
+	
+	//加载排课计划列表
+	function loadPlanList(n,s){
+		var searchVo = {
+			startDate:$("#test1").val(),
+			endDate:$("#test2").val(),
+			id:$("#id").val(),
+			pageNum:n,
+			pageSize:s
+		}
+		$.ajax({
+			url:"http://localhost:8080/course/api/plans",
+			type:"post",
+			dataType:"json",
+			contentType:"application/json",
+			data:JSON.stringify(searchVo),
+			success:function(data){
+				planPage = data;
+				$("#currPage").text(data.pageNum);
+				$("#totalCount").text(data.total);
+				vm.plans = data.list;
+			}
+		});
+		
+	}
+	
+	//选择排课计划并显示详情
+	function checkPlan(){
+		var planId = $("[name=planradio]:checked").attr("data-id");
+		if(planId){
+			$.getJSON("http://localhost:8080/course/api/plandetails/"+planId,function(data){
+				$("#planId").val(data.plan.id);
+				$("#drawupTime").val(vm.dateFormat(data.plan.drawupTime));
+				$("#drawupPersonName").val(data.plan.drawupPersonName);
+				var stateName = data.plan.state == 2?"已确认":"未确认";
+				$("#select").val(stateName);
+				var list = data.plan.noTime.split("、");
+				for(var i = 0; i<list.length;i++){
+					if(list[i] == "1"){
+						$("#schoolNoTime").val(parseInt(i)+1);
+					}
+				}
+				$("#remarks").val(data.plan.remarks);
+				var classTbody = $("#classPlanTbody");
+				var teacherTbody = $("#teacherPlanTbody");
+				classTbody.empty();
+				teacherTbody.empty();
+				for(var i=0;i<data.details.length;i++){
+					var prior = parseIntToPrior(data.details[i].prior);
+					var noTimeStr = parseIntStrToWeekStr(data.details[i].noTime);
+					if(data.details[i].type == 1){
+						var tr = $("<tr><td><input type='checkbox' name='checkTeacherDetails' lay-skin='primary' data-id='"+data.details[i].id+"' data-classOrTeacherId='"+data.details[i].classOrTeacherId+"' ></td><td>"+data.details[i].name+"</td><td>"+noTimeStr+"</td></tr>");	
+						teacherTbody.append(tr);
+					}else{
+						var tr = $("<tr><td><input type='checkbox' name='checkClassDetails' lay-skin='primary' data-id='"+data.details[i].id+"' data-classOrTeacherId='"+data.details[i].classOrTeacherId+"'></td><td>"+(i+1)+"</td><td>"+data.details[i].name+"</td><td>"+noTimeStr+"</td><td>"+data.details[i].classFrequency+"</td><td>"+prior+"</td></tr> ");
+						classTbody.append(tr);
+					}
+				}
+			});
+			$('#ruleListModal').modal('hide');			
+		}else{
+			layer.alert("请选择一个排课计划");
+		}
+	}
+	
+	//删除排课计划
+	function deletePlan(){
+		var planId = $("[name=planradio]:checked").attr("data-id");
+		if(planId){
+			var bool = layer.confirm("确定要删除这个排课计划么？",function(index){
+				if(planId == $("#planId").val()){
+					loadBehindLogin();
+					var classTbody = $("#classPlanTbody");
+					var teacherTbody = $("#teacherPlanTbody");
+					classTbody.empty();
+					teacherTbody.empty();
+				}
+				$.ajax({
+					url:"http://localhost:8080/course/api/deleteplan/"+planId,
+					type:"delete",
+					dataType:"json",
+					success:function(data){
+						if(data.code == 200){
+							layer.msg("删除成功！");
+							loadPlanList(1,5);			
+						}else if(data.code == 501){
+							layer.msg("删除失败，当前计划已被选中");
+						}else if(data.code == 500){
+							layer.msg("删除失败！");
+						} 
+						if(planId == $("#planId").val()){
+							loadBehindLogin();
+						}
+					}
+				});
+				layer.close(index);
+			},function(index){
+				layer.close(index);
+			});
+		}else{
+			layer.alert("请选择一个排课计划");
+		}
+	}
+	
+	function loadBehindLogin(){
+		$.get("http://localhost:8080/course/api/getid",function(data){
+			$("#planId").val(data);
+			$("#drawupTime").val(vm.dateFormat(new Date()));
+			var user = JSON.parse(sessionStorage.getItem("user"));
+			$("#drawupPersonName").val(user.name);
+			$("#schoolNoTime").val(7);
+			$("#select").val("未确认");
+		},"text");
+	}
+</script>
+
+</html>

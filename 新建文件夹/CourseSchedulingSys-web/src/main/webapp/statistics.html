@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+<title>教务课时统计</title>
+<link rel="stylesheet" type="text/css" href="layui/css/layui.css" />
+<link rel="stylesheet" type="text/css" href="css/chenlin_tongji.css" />
+</head>
+
+<body>
+	<div id="one">
+		<div id="p1">
+			请选择需要查询的日期：
+			<div class="layui-inline">
+				<!-- 注意：这一层元素并不是必须的 -->
+				<input type="text" class="layui-input" id="time">
+			</div>
+			<button
+				class="layui-btn layui-btn-radius layui-btn-normal layui-btn-xs"
+				id="cha" style="margin-left: 10px;">
+				<i class="layui-icon layui-icon-search">查询</i>
+			</button>
+			<span style="margin-left: 10px;">备注:教员课时计算标准：S1、S2【35元/课时】Y2【45元/课时】</span>
+
+		</div>
+		<div id="p2">
+			<div>
+				<i class="layui-icon layui-icon-friends"></i><span>教员课时系统</span>
+			</div>
+		</div>
+		<div id="p4">
+			<div id="but">
+				<button
+					class="layui-btn layui-btn-radius layui-btn-normal layui-btn-xs"
+					id="tab">表格显示</button>
+				<button
+					class="layui-btn layui-btn-radius layui-btn-normal layui-btn-xs"
+					id="tree">树状图显示</button>
+				<button
+					class="layui-btn layui-btn-radius layui-btn-normal layui-btn-xs "
+					id="outExcle">
+					<i class="layui-icon layui-icon-file">打印</i>
+				</button>
+			</div>
+			<div id="p41">
+				<div id="p411">
+					<h1>
+						<samp>ACCP</samp>
+						&nbsp;<span id="data">2016年5月</span><span>份</span>&nbsp;
+						<samp>教员课时</samp>
+					</h1>
+				</div>
+				<table class="layui-table">
+					<thead>
+						<tr>
+							<th>编号</th>
+							<th>教员</th>
+							<th>S1课时</th>
+							<th>S2课时</th>
+							<th>Y2课时</th>
+							<th>总课时</th>
+							<th>确认签字</th>
+							<th>备注</th>
+						</tr>
+					</thead>
+					<tbody id="">
+						<tr v-for="(temp ,index) in count">
+							<th>{{index+1}}</th>
+							<th>{{temp.teachername}}</th>
+							<th>{{temp.courseCountS1}}</th>
+							<th>{{temp.courseCountS2}}</th>
+							<th>{{temp.courseCountY2}}</th>
+							<th>{{temp.courseCountSum}}</th>
+							<th></th>
+							<th></th>
+						</tr>
+
+					</tbody>
+				</table>
+				<div id="pagination"></div>
+				<div id="Paging"></div>
+			</div>
+			
+			<div id="main" style="height: 500px;"></div>
+			<div id="p42" style="height: 500px;"></div>
+		</div>
+	</div>
+</body>
+<script src="layui/layui.js"></script>
+<script src="layui/lay/modules/form.js"></script>
+<script src="js/jquery-1.12.4.js"></script>
+<script src="js/echarts.js"></script>
+<script type="text/javascript" src="js/vue.js"></script>
+<script>
+	var courseCountSum = new Array();
+	var courseCountS1 = new Array();
+	var courseCountS2 = new Array();
+	var courseCountY2 = new Array();
+	var teachername = new Array();
+	
+	function countPage() {
+		//基于准备好的dom，初始化echarts实例
+		var myChart = echarts.init(document.getElementById('main'));
+		// 指定图表的配置项和数据
+		var option = {
+			title: {
+				text: '课时统计',
+				left: 'left',
+			},
+			tooltip: {},
+			legend: {
+				top: 25,
+				data: ['S1', 'S2', 'Y2', '总课时']
+			},
+			xAxis: {
+				data: teachername,
+				type : 'category',
+			},
+			yAxis: {},
+			series: [{
+				name: 'S1',
+				type: 'bar',
+				data: courseCountS1
+			}, {
+				name: 'S2',
+				type: 'bar',
+				data: courseCountS2
+			}, {
+				name: 'Y2',
+				type: 'bar',
+				data: courseCountY2
+			}, {
+				name: '总课时',
+				type: 'bar',
+				data: courseCountSum
+			}]
+		};
+
+		// 使用刚指定的配置项和数据显示图表。
+		myChart.setOption(option);
+	}
+	$(function(){
+		/* 导出Excle */
+		$("#outExcle").click(function(){
+			$.getJSON("http://localhost:8080/course/lxh_counts/getExcle",function(msg){
+				if(msg.code==200){
+					layer.open({
+						title : '提示',
+						content : '导出成功！'
+					});
+				}
+			});
+			
+		});
+		/* $.getJSON("http://localhost:8080/course/lxh_counts/getData", function(
+				data) {
+			for (var i = 0; i < data.length; i++) {
+				teachername[i]=data[i].teachername;
+				courseCountSum[i] = data[i].courseCountSum;
+				courseCountS1[i]=data[i].courseCountS1;
+				courseCountS2[i]=data[i].courseCountS2;
+				courseCountY2[i]=data[i].courseCountY2;
+				
+			}
+			countPage();
+		}); */
+		/*查询日期*/
+		layui.use('laydate', function() {
+			var laydate = layui.laydate;
+
+			//执行一个laydate实例
+			laydate.render({
+				elem : '#time' //指定元素
+				,
+				format : 'yyyy年MM月'
+			});
+		});
+		
+		/*树状图*/
+		jQuery("#tree").click(function() {
+			jQuery("#p41").css("display", "none");
+			jQuery("#p42").css("display", "block");
+			$.getJSON("http://localhost:8080/course/lxh_counts/getData", function(json) {
+				
+				var option = {
+					    title: {
+					        text: 'ECharts 入门示例'
+					    },
+					    tooltip: {},
+					    
+					    series: [{
+					        name: '报销金额',
+					        type: 'pie',
+					        radius:'60%',
+					        label : {
+					        	normal : {
+					        		formatter: '{b}: ({d}%)',
+					        		textStyle : {
+						        		fontWeight : 'normal',
+						        		fontSize : 15
+					        		}
+					        	}
+					        }
+					    }],
+					    dataset:{
+					    	source:data
+					    }
+					};
+				
+				var myChart = echarts.init(document.getElementById('p42'));
+				if (myChart != null && myChart != "" && myChart != undefined) {
+			        myChart.dispose();
+			    }
+				myChart.setOption(option);
+			});
+		});
+		/*树状图*/
+		
+		
+		/*表格*/
+		jQuery("#tab").click(function() {
+			jQuery("#p42").css("display", "none");
+			jQuery("#p41").css("display", "block");
+		});
+	});
+
+	/*获取时间*/
+	jQuery("#cha").click(function() {
+		var time = jQuery("#time").val();
+		if (time == null || time == "") {
+			layer.open({
+				title : '提示',
+				content : '请选择日期'
+			});
+			return;
+		}
+		jQuery("#data").text(time);
+		
+	});
+	var vm = new Vue({
+		el: "#p41",
+		/*获取数据库*/
+		data: {
+			count: []
+		},
+		
+	});
+	/**
+	 * layui分页
+	 */
+	layui.use('laypage', function() {
+		var laypage = layui.laypage;
+		laypage.render({
+			elem: 'pagination',
+			count: totalCount,
+			layout: ['count', 'prev', 'page', 'next', 'limit', 'refresh', 'skip'],
+			jump: function(obj, first) {
+				//点击非第一页页码时的处理逻辑。比如这里调用了ajax方法，异步获取分页数据
+				if(!first) {
+					console.log(obj.curr);
+					pagination(obj.curr, obj.limit); //第二个参数不能用变量pageSize，因为当切换每页大小的时候会出问题
+					$("[type=checkbox]").each(function() {
+						$(this).prop("checked", false);
+					}); 
+				}
+			}
+		});
+	});
+	var pageIndex = 1;
+	var pageSize = 10;
+	var totalCount = 0;
+	pagination(pageIndex, pageSize);
+
+	function pagination(pageIndex, pageSize) {
+		$.ajax({
+			type: 'GET',
+			url: 'http://localhost:8080/course/lxh_counts/count/'+pageIndex+'/'+pageSize,
+			dataType: 'json',
+			async: false, //这里设置为同步执行，目的是等数据加载完再调用layui分页组件，不然分页组件拿不到totalCount的值
+			success: function(data) {
+				vm.count = data.list;
+				totalCount = data.total;
+				for (var i = 0; i < data.list.length; i++) {
+					teachername[i]=data.list[i].teachername;
+					courseCountSum[i] = data.list[i].courseCountSum;
+					courseCountS1[i]=data.list[i].courseCountS1;
+					courseCountS2[i]=data.list[i].courseCountS2;
+					courseCountY2[i]=data.list[i].courseCountY2;
+					
+				}
+				countPage();
+			}
+		});
+	};
+	</script>
+
+</html>

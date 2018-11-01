@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style>
+	input{
+		font-size:10px;
+	}
+</style>
+</head>
+<body>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" href="css/bootstrap.min.css" />
+		<link rel="stylesheet" href="layui/css/layui.css" media="all">
+		<style>
+			#userName,#classCount,#period,#classTeacher,#teachers,#courseCount,#course{
+				height:30px;
+				border:1px lightgrey solid;
+				width:200px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<form class="form-horizontal">
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">班级名称</label>
+				<div class="col-sm-10">
+					<input type="text" id="userName" class="form-control" style="width: 20%;" >
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">班级人数</label>
+				<div class="col-sm-10">
+					<input type="text" id="classCount" class="form-control" style="width: 20%;" >
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">学期</label>
+				<div class="col-sm-10">
+							<select name="period" lay-verify="" id="period">
+								<option value="1">S1</option>
+								<option value="2">S2</option>
+								<option value="3">Y2</option>
+							</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">班主任</label>
+				<div class="col-sm-10">
+							<select name="classTeacher" lay-verify="" id="classTeacher">
+								<option value="">请选择班主任</option>
+							</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">教员</label>
+				<div class="col-sm-10">
+							<select name="teachers" lay-verify="" id="teachers">
+								<option value="">请选择教员</option>
+							</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">排课次数</label>
+				<div class="col-sm-10">
+							<select name="courseCount" lay-verify="" id="courseCount">
+								<option value="3">3</option>
+								<option value="4">4</option>
+							</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">所上课程</label>
+				<div class="col-sm-10">
+							<select name="course" lay-verify="" id="course">
+								<option value="">请选择课程</option>
+							</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-10">
+					<button type="button" class="btn btn-default" id="save">保存</button>
+					<button class="btn btn-default" data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</form>
+	</body>
+	<script src="js/jquery-1.12.4.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="layui/lay/modules/layer.js"></script>
+	<script>
+	var period;
+	function loadInfo(periodId){
+		$.ajax({
+			type : "GET",
+			dataType : "json",
+			url: '/course/courses/getUpdateInfo/'+periodId,
+			success: function(data) {
+				$.each(data.course,function(i,obj){
+					$("#course").append("<option value='"+obj.id+"'>"+obj.name+"</option>");
+				})
+				$.each(data.teacher,function(i,obj){
+					$("#teachers").append("<option value='"+obj.id+"'>"+obj.name+"</option>");
+				})
+				$.each(data.classTeacher,function(i,obj){
+					$("#classTeacher").append("<option value='"+obj.id+"'>"+obj.name+"</option>");
+				})
+			}
+		});
+		
+	}
+	var c;
+	$(function(){
+		var id=window.sessionStorage.getItem("id");
+		var periodId=window.sessionStorage.getItem("periodId");
+		loadInfo(periodId);
+		$.ajax({
+			type : "GET",
+			dataType : "json",
+			url: '/course/courses/getClassInfo/'+id,
+			success: function(data) {
+				$("#userName").val(data[0].name);
+				$("#classCount").val(data[0].studentsCount);
+				$("#period").val(data[0].periodId);
+				$("#classTeacher").val(data[0].classTeacherId);
+				$("#teachers").val(data[0].teacherId);
+				$("#courseCount").val(data[0].courseCount);
+				$("#course").val(data[0].courseId);
+				
+				c=data[0];
+			}
+		});
+		
+		$("#period").change(function(){
+			periodId=$(this).val();
+			$("#course").empty();
+			$("#teachers").empty();
+			$("#classTeacher").empty();
+			loadInfo(periodId);
+		})
+		
+		
+		$("#save").click(function(){
+			var name = $.trim($("#userName").val());
+			var studentsCount = $.trim($("#classCount").val());
+			var period = $("#period").val();
+			var classTeacher = $.trim($("#classTeacher").val());
+			var teacher = $.trim($("#teachers").val());
+			var courseCount = $("#courseCount").val();
+			var courseId = $("#course").val();
+			if(name == "" ) {
+				layer.msg("班级名称必须填写!");
+				return false;
+			}
+			if(classCount == "" ) {
+				layer.msg("班级人数必须填写!");
+				return false;
+			}
+			
+			
+			var classInfo = {};
+			classInfo["id"] = c.id;
+			classInfo["name"] = name;
+			classInfo["studentsCount"] = studentsCount;
+			classInfo["periodId"] = period;
+			classInfo["classTeacherId"] = classTeacher;
+			classInfo["teacherId"] = teacher;
+			classInfo["courseCount"] = courseCount;
+			classInfo["courseId"] = courseId;
+			
+			$.ajax("/course/courses/classInfo/modify", {
+				"type": "put",
+				"dataType": "json",
+				"timeout": 4000,
+				"data": JSON.stringify(classInfo),
+				"contentType": "application/json",
+				"success": function(json) {
+					if(json.code == 200) {
+						layer.msg("修改成功!");
+					}
+				},
+				"error": function(xhr, ms, e) {
+					layer.msg("修改失败!");
+				}
+			});
+		})
+	})
+	</script>
+</html>

@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>班主任信息</title>
+		<link rel="stylesheet" type="text/css" href="layui/css/layui.css" media="all" />
+		<link rel="stylesheet" href="css/bootstrap.min.css" />
+
+		<style>
+			.da {
+				margin-top: -30px;
+				height: 70px;
+				display: flex;
+				justify-content: space-between;
+				border: #000000 solid 0px;
+			}
+			
+			.zong {
+				display: flex;
+				justify-content: flex-end;
+				border: #000000 solid 0px;
+			}
+			
+			.zong2 {
+				margin-top: 20px;
+				margin-left: -70px;
+			}
+			
+			.er {
+				width: 300px;
+			}
+			
+			.san {
+				margin-top: -10px;
+				display: flex;
+				flex-direction: row;
+				justify-content: flex-end;
+				flex-wrap: wrap;
+				height: auto;
+			}
+			
+			.yi {
+				height: auto;
+				border: 0px solid gray;
+				display: flex;
+				justify-content: flex-start;
+				margin-top: 10px;
+				/*background-color: #E6E6E6;*/
+			}
+			
+			.zhong {
+				text-align: center;
+				line-height: 40px;
+			}
+			
+			.layui-unselect {
+				width: 70px;
+			}
+			
+			.layui-input-block {
+				margin-left: 0px;
+			}
+			
+			.AAAAA {
+				line-height: 35px;
+				height: 40px;
+				border: 0px solid red;
+				background-color: #B1D2EC
+			}
+			
+			.AOP {
+				line-height: 35px;
+				height: 40px;
+				border: 0px solid red;
+				background-color: #B1D2EC
+			}
+			
+			.WW {
+				margin-left: 50px;
+				margin-top: 30px;
+				display: flex;
+			}
+			
+			.WWW {
+				margin-left: 50px;
+				margin-top: 10px;
+				display: flex;
+				margin-bottom: 20px;
+				text-align: center;
+			}
+			
+			.KKK {
+				height: 40px;
+				line-height: 40px;
+				width: 100px;
+				margin-left: 20px;
+				margin-right: 20px;
+			}
+			
+			.layui-form-item .layui-inline {
+				margin-bottom: 5px;
+				margin-right: -10px;
+			}
+			
+			.ZZZ {
+				margin-left: 20px;
+			}
+			
+			.pp {
+				margin-right: 20px;
+				margin-left: -10px;
+				margin-top: 10px;
+			}
+			
+			input[type=checkbox] {
+				width: 1px;
+			}
+			
+			#allChoose {
+				width: 30px;
+			}
+			
+			[name=fy] {
+				width: 30px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="AAAAA">
+			<i class="layui-icon" style="color: #007DDB;">&#xe66f;</i> 班主任信息管理
+		</div>
+		<div class="WWW">
+			<div class="zhong">
+				筛选条件:
+			</div>
+			<div class="KKK" style="">
+				<select name="city" lay-verify="">
+					<option value="id">工号</option>
+					<option value="name">姓名</option>
+				</select>
+			</div>
+			<div><input type="text" name="title" required lay-verify="required" autocomplete="off" class="layui-input" style="width: 300px;" value=""> </div>
+			<div><button class="layui-btn layui-btn-xs ZZZ" onclick="cx()"><i class="layui-icon" style="color:gold;">&#xe615;</i>查询</button></div>
+			<div><button class="layui-btn layui-btn-xs ZZZ" onclick="empty()"><i class="layui-icon" style="color:gold;">&#x1006;</i>清空</button></div>
+		</div>
+		<div class="da">
+			<div class="zong">
+
+				<div class="yi">
+					<div class="pp" id="zj"><button class="layui-btn layui-btn-xs ZZZ"><i class="layui-icon" style="color:gold;">&#xe654;</i>增加</button></div>
+
+					<div class="pp" onclick="compile()"><button class="layui-btn layui-btn-xs ZZZ"><i class="layui-icon" style="color:gold;">&#xe642;</i>编辑</button></div>
+
+					<div class="pp" id="sc"><button class="layui-btn layui-btn-xs ZZZ" onclick="deletechecklis()"><i class="layui-icon" style="color:gold;">&#xe615;</i>删除</button></div>
+				</div>
+
+			</div>
+
+		</div>
+		<table class="layui-table">
+			<colgroup>
+				<col width="100">
+				<col width="200">
+				<col>
+			</colgroup>
+			<thead>
+				<tr>
+					<th width="7%"><input type="checkbox" name="checkbox" onclick="checkboxed('checkbox')" lay-skin="primary" lay-filter="allChoose" id="allChoose"></th>
+					<th width="18%">工号</th>
+					<th width="16%">姓名</th>
+					<th width="13%">性别</th>
+					<th width="16%">身份证</th>
+					<th width="16%">电话</th>
+					<th width="13%">所带班级</th>
+				</tr>
+			</thead>
+			<form>
+				<tbody id="vmTeacher">
+					<tr v-for="(temp,index) in Teacher">
+						<td><input type="checkbox" name="checkbox" lay-skin="primary" lay-filter="allChoose" id="allChoose" v-bind:value="temp.id" /></td>
+						<td name="gh">{{temp.id}}</td>
+						<td name="xm">{{temp.name}}</td>
+						<td name="xb">{{temp.sex}}</td>
+						<td name="sfz">{{temp.identityCard}}</td>
+						<td name="dh">{{temp.phone}}</td>
+						<td name="bj"><span v-for="(c,index) in temp.classinfo">{{c.name}},</span></td>
+					</tr>
+				</tbody>
+			</form>
+		</table>
+		</div>
+		<div id="pagination"></div>
+
+	</body>
+
+	<script src="layui/layui.js"></script>
+	<script src="layui/lay/modules/form.js"></script>
+	<script src="js/jquery-1.12.4.js"></script>
+	<script type="text/javascript" src="js/vue.js"></script>
+	<script>
+		var pageIndex = 1;
+		var pageSize = 10;
+		var totalCount = 0;
+		var type = "null";
+		var condition = "null";
+
+		function cx() {
+			type = jQuery("[name=city]").val();
+			condition = jQuery("[name=title]").val();
+			pagination(pageIndex, pageSize, type, condition);
+		}
+
+		jQuery(document).ajaxError(function() {
+			layer.alert("服务器异常!");
+		});
+
+		function empty() {
+			jQuery("[name=title]").val("");
+		}
+
+		function checkboxed(objName) {
+			var objNameList = document.getElementsByName(objName);
+			if(null != objNameList) {
+				if(objNameList[0].checked) {
+					for(var i = 0; i < objNameList.length; i++) {
+						objNameList[i].checked = "checked";
+					}
+				} else {
+					for(var i = 0; i < objNameList.length; i++) {
+						objNameList[i].checked = "";
+					}
+				}
+			}
+		}
+
+		function compile() {
+			var json = {};
+			var objNameList = jQuery("[type=checkbox]");
+			var num = 0;
+			if(null != objNameList) {
+				for(var i = 1; i < objNameList.length; i++) {
+					if(objNameList[i].checked) {
+						num++;
+					}
+				}
+				if(num > 1) {
+					layer.alert('不能同时编辑多个信息！');
+					return;
+				} else if(num < 1) {
+					layer.alert("请选择");
+					return;
+				} else {
+					for(var i = 1; i < objNameList.length; i++) {
+						if(objNameList[i].checked) {
+							window.sessionStorage.setItem("id", objNameList[i].value)
+						}
+					}
+					layer.open({
+						type: 2,
+						title: ['编辑班主任', 'font-size:18px;'],
+						content: 'updateteacher.html',
+						area: ['1000px', '450px'],
+						skin: 'demo-class',
+						anim: 5,
+						maxmin: true,
+						end: function() {
+							pagination(pageIndex, pageSize, type, condition);
+						}
+					});
+				}
+			}
+		}
+
+		function deletechecklis() {
+			var objNameList = jQuery("[type=checkbox]");
+			var num = 0;
+			for(var i = 1; i < objNameList.length; i++) {
+				if(objNameList[i].checked) {
+					num++;
+				}
+			}
+			if(num < 1) {
+				layer.alert("请选择!");
+				return;
+			}
+
+			layer.confirm('是否确认删除?', function(index) {
+				var id = [];
+				var para = jQuery("[type=checkbox]").serializeArray();
+				jQuery.each(para, function(e, b) {
+					id.push(b.value);
+				});
+				$.ajax({
+					url: "http://127.0.0.1:8080/course/yyh/Teacher/" + id,
+					type: "delete",
+					dataType: "json",
+					success: function(data) {
+						if(data.code == "200") {
+							layer.alert(data.msg);
+							var objNameList = jQuery("[type=checkbox]");
+							if(null != objNameList) {
+								for(var i = 1; i < objNameList.length; i++) {
+									if(objNameList[i].checked) {
+										jQuery(objNameList[i]).parent().parent().remove();
+									}
+								}
+							}
+						}
+					}
+				});
+			});
+		}
+
+		jQuery("#zj").click(function() {
+			layer.open({
+				type: 2,
+				title: ['新增班主任', 'font-size:18px;'],
+				content: 'addteacher.html',
+				area: ['1000px', '450px'],
+				skin: 'demo-class',
+				anim: 5,
+				maxmin: true,
+				end: function() {
+					pagination(pageIndex, pageSize, type, condition);
+				}
+			});
+		});
+
+		/**
+		 * vue模板数据渲染
+		 */
+		var vm = new Vue({
+			el: "#vmTeacher",
+			data: {
+				Teacher: []
+			}
+		});
+		/**
+		 * layui分页
+		 */
+		layui.use('laypage', function() {
+			var laypage = layui.laypage;
+			laypage.render({
+				elem: 'pagination',
+				count: totalCount,
+				layout: ['count', 'prev', 'page', 'next', 'limit', 'refresh', 'skip'],
+				jump: function(obj, first) {
+					//点击非第一页页码时的处理逻辑。比如这里调用了ajax方法，异步获取分页数据
+					if(!first) {
+						pagination(obj.curr, obj.limit, type, condition); //第二个参数不能用变量pageSize，因为当切换每页大小的时候会出问题
+					}
+				}
+			});
+		});
+		pagination(pageIndex, pageSize, type, condition);
+
+		function pagination(pageIndex, pageSize, type, condition) {
+			if(type == "") {
+				type = "null";
+			}
+			if(condition == "") {
+				condition = "null";
+			}
+			var xuan = $("[name=checkbox]");
+			for(var i in xuan) {
+				xuan[i].checked = false;
+			}
+			$.ajax({
+				type: 'POST',
+				url: 'http://127.0.0.1:8080/course/yyh/Teacher/' + pageIndex + '/' + pageSize + '/' + type + '/' + condition,
+				dataType: 'json',
+				async: false, //这里设置为同步执行，目的是等数据加载完再调用layui分页组件，不然分页组件拿不到totalCount的值
+				success: function(data) {
+					vm.Teacher = data.list;
+					totalCount = data.total;
+					pageinfo(data);
+				}
+			});
+		};
+
+		function pageinfo(data) {
+			layui.use('laypage', function() {
+				var laypage = layui.laypage;
+				laypage.render({
+					elem: 'pagination',
+					count: data.total,
+					curr: data.pageNum,
+					layout: ['count', 'prev', 'page', 'next', 'limit', 'refresh', 'skip'],
+					jump: function(obj, first) {
+						//点击非第一页页码时的处理逻辑。比如这里调用了ajax方法，异步获取分页数据
+						if(!first) {
+							pagination(obj.curr, obj.limit, type, condition); //第二个参数不能用变量pageSize，因为当切换每页大小的时候会出问题
+						}
+					}
+				});
+			});
+		}
+	</script>
+
+</html>

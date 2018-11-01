@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+<title></title>
+<link rel="stylesheet" href="css/bootstrap.min.css" />
+<link rel="stylesheet" href="layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="css/bootstrap-multiselect.css" media="all" />
+<style type="text/css">
+/* 下拉多选样式 需要引用*/
+select[multiple]+.layui-form-select>.layui-select-title>input.layui-input
+	{
+	border-bottom: 0
+}
+
+select[multiple]+.layui-form-select dd {
+	padding: 0;
+}
+
+select[multiple]+.layui-form-select .layui-form-checkbox[lay-skin=primary]
+	{
+	margin: 0 !important;
+	display: block;
+	line-height: 36px !important;
+	position: relative;
+	padding-left: 26px;
+}
+
+select[multiple]+.layui-form-select .layui-form-checkbox[lay-skin=primary] span
+	{
+	line-height: 36px !important;
+	float: none;
+}
+
+select[multiple]+.layui-form-select .layui-form-checkbox[lay-skin=primary] i
+	{
+	position: absolute;
+	left: 10px;
+	top: 0;
+	margin-top: 9px;
+}
+
+.multiSelect {
+	line-height: normal;
+	height: auto;
+	padding: 4px 10px;
+	overflow: hidden;
+	min-height: 38px;
+	margin-top: -38px;
+	left: 0;
+	z-index: 99;
+	position: relative;
+	background: none;
+}
+
+.multiSelect a {
+	padding: 2px 5px;
+	background: #908e8e;
+	border-radius: 2px;
+	color: #fff;
+	display: block;
+	line-height: 20px;
+	height: 20px;
+	margin: 2px 5px 2px 0;
+	float: left;
+}
+
+.multiSelect a span {
+	float: left;
+}
+
+.multiSelect a i {
+	float: left;
+	display: block;
+	margin: 2px 0 0 2px;
+	border-radius: 2px;
+	width: 8px;
+	height: 8px;
+	padding: 4px;
+	position: relative;
+	-webkit-transition: all .3s;
+	transition: all .3s
+}
+
+.multiSelect a i:before, .multiSelect a i:after {
+	position: absolute;
+	left: 8px;
+	top: 2px;
+	content: '';
+	height: 12px;
+	width: 1px;
+	background-color: #fff
+}
+
+.multiSelect a i:before {
+	-webkit-transform: rotate(45deg);
+	transform: rotate(45deg)
+}
+
+.multiSelect a i:after {
+	-webkit-transform: rotate(-45deg);
+	transform: rotate(-45deg)
+}
+
+.multiSelect a i:hover {
+	background-color: #545556;
+}
+
+.multiOption {
+	display: inline-block;
+	padding: 0 5px;
+	cursor: pointer;
+	color: #999;
+}
+
+.multiOption:hover {
+	color: #5FB878
+}
+
+@font-face {
+	font-family: "iconfont";
+	src:
+		url('data:application/x-font-woff;charset=utf-8;base64,d09GRgABAAAAAAaoAAsAAAAACfwAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAABHU1VCAAABCAAAADMAAABCsP6z7U9TLzIAAAE8AAAARAAAAFZW7kokY21hcAAAAYAAAABwAAABsgdU06BnbHlmAAAB8AAAAqEAAAOUTgbbS2hlYWQAAASUAAAALwAAADYR+R9jaGhlYQAABMQAAAAcAAAAJAfeA4ZobXR4AAAE4AAAABMAAAAUE+kAAGxvY2EAAAT0AAAADAAAAAwB/gLGbWF4cAAABQAAAAAfAAAAIAEVAGhuYW1lAAAFIAAAAUUAAAJtPlT+fXBvc3QAAAZoAAAAPQAAAFBD0CCqeJxjYGRgYOBikGPQYWB0cfMJYeBgYGGAAJAMY05meiJQDMoDyrGAaQ4gZoOIAgCKIwNPAHicY2Bk/s04gYGVgYOpk+kMAwNDP4RmfM1gxMjBwMDEwMrMgBUEpLmmMDgwVLwwZ27438AQw9zA0AAUZgTJAQAokgyoeJzFkTEOgCAQBOdAjTH+wtbezvggKyteTPyFLpyFvsC9DNnbHIEA0AJRzKIBOzCKdqVW88hQ84ZN/UBPUKU85fVcrkvZ27tMc17FR+0NMh2/yf47+quxrtvT6cVJD7pinpzyI3l1ysy5OIQbzBsVxHicZVM9aBRBFJ43c7szyeV2s/97m9zP3ppb5ZID72+9iJfDnyIiGImCMZWFXaKdaSyuESJYCFZpRZBUCpaJcCCKaexsRVHQytrC2/Pt5ZSIy+z3vvnemwfvY4ZIhAw/s33mEoMcJyfJebJCCMgVKCk0B37YqNIKWL5kOabCwiD0eVCqsjPglGTTrrUaZUfmsgoK5KHu11phlYbQbHToaajZOYDsjLeqz83q7BFMumH+fnyRPgGrEMyqnYV4eX7JrBUNsTWl61ldfyhkSRKUplQFNh17QpqYlOOnkupZ+4UTtABT2dC7tJYpzug3txu3c3POBECvB8ZMUXm2pHkarnuebehZPp0RrpcJjpmw9TXtGlO58heCXwpnfcVes7PExknPkVWctFxSIUxANgs4Q9RaglYjjIKwCqGvANfy4NQtBL8DkYaipAVVaGqNVuTnoQBYg8NzHzNaJ7HAdpjFXfF2DSEjxF2ui7T8ifP2CsBiZTCsLCbxCv4UDvlgp+kFgQcHXgAQP64s0gdQdOOKWwSM8CGJz4V4c11gQwc70hTlH4XLv12dbwO052OotGHMYYj8VrwDJQ/eeSXA2Ib24Me42XvX993ECxm96LM+6xKdBCRCNy6TdfSDoxmJFXYBaokV5RL7K/0nOHZ9rBl+chcCP7kVMML6SGHozx8Od3ZvCEvlm5KQ0nxPTJtiLHD7ny1jsnxYsAF7imkq8QVEOBgF5Yh0yNkpPIenN2QAsSdMNX6xu85VC/tiE3Mat6P8JqWM73NLhZ9mzjBy5uAlAlJYBiMRDPQleQ+9FEFfJJImGnHQHWIEmm/5UB8h8uaIIzrc4SEPozByel3oDvFcN+4D+dU/uou/L2xv/1mUQBdTCIN+jGUEgV47UkB+Aw7YpAMAAAB4nGNgZGBgAGLbQwYd8fw2Xxm4WRhA4HrO20sI+n8DCwOzE5DLwcAEEgUAPX4LPgB4nGNgZGBgbvjfwBDDwgACQJKRARWwAgBHCwJueJxjYWBgYH7JwMDCgMAADpsA/QAAAAAAAHYA/AGIAcp4nGNgZGBgYGWIYWBjAAEmIOYCQgaG/2A+AwASVwF+AHicZY9NTsMwEIVf+gekEqqoYIfkBWIBKP0Rq25YVGr3XXTfpk6bKokjx63UA3AejsAJOALcgDvwSCebNpbH37x5Y08A3OAHHo7fLfeRPVwyO3INF7gXrlN/EG6QX4SbaONVuEX9TdjHM6bCbXRheYPXuGL2hHdhDx18CNdwjU/hOvUv4Qb5W7iJO/wKt9Dx6sI+5l5XuI1HL/bHVi+cXqnlQcWhySKTOb+CmV7vkoWt0uqca1vEJlODoF9JU51pW91T7NdD5yIVWZOqCas6SYzKrdnq0AUb5/JRrxeJHoQm5Vhj/rbGAo5xBYUlDowxQhhkiMro6DtVZvSvsUPCXntWPc3ndFsU1P9zhQEC9M9cU7qy0nk6T4E9XxtSdXQrbsuelDSRXs1JErJCXta2VELqATZlV44RelzRiT8oZ0j/AAlabsgAAAB4nGNgYoAALgbsgJWRiZGZkYWRlZGNgbGCuzw1MykzMb8kU1eXs7A0Ma8CiA05CjPz0rPz89IZGADc3QvXAAAA')
+		format('woff')
+}
+
+.iconfont {
+	font-family: "iconfont" !important;
+	font-size: 16px;
+	font-style: normal;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.icon-fanxuan:before {
+	content: "\e837";
+}
+
+.icon-quanxuan:before {
+	content: "\e623";
+}
+
+.icon-qingkong:before {
+	content: "\e63e";
+}
+/* 下面是页面内样式，无需引用 */
+.layui-block {
+	margin-bottom: 10px;
+}
+
+.layui-form-label {
+	width: 180px;
+}
+
+.code {
+	color: gray;
+	margin-left: 10px;
+}
+
+.unshow>#result {
+	display: none;
+}
+
+pre {
+	padding: 5px;
+	margin: 5px;
+}
+
+.string {
+	color: green;
+}
+
+.number {
+	color: darkorange;
+}
+
+.boolean {
+	color: blue;
+}
+
+.null {
+	color: magenta;
+}
+
+.key {
+	color: red;
+}
+</style>
+</head>
+
+<body class="layui-container">
+	<!-- ------------------------------- -->
+	<form class="layui-form" action="">
+           <!-- <div class="form-group">
+                     <label for="inputEmail3" class="col-sm-2 control-label">工号</label>
+                     <div class="col-sm-10">
+                           <input type="text" id="userName" class="form-control" style="width: 20%;" >
+                     </div>
+                </div> -->
+           <div class="layui-form-item">
+                <label for="inputEmail3" class="col-sm-2 control-label">姓名</label>
+                <div class="col-sm-10">
+                     <input type="text" id="name" class="form-control"
+                           style="width: 20%;">
+                </div>
+           </div>
+           <div class="layui-form-item">
+                <label for="inputEmail3" class="col-sm-2 control-label">性别</label>
+                <div class="layui-input-block ">
+                     <input type="radio" name="sex" value="男" title="男"> <input
+                           type="radio" name="sex" value="女" title="女" checked> <input
+                           type="radio" name="sex" value="" title="中性" disabled>
+                </div>
+           </div>
+           <div class="layui-form-item " id="vmCourse">
+                <label for="inputEmail3" class="layui-col-sm1 control-label">技能</label>
+                <div class="layui-input-block layui-col-sm8">
+                     <div class="layui-row">
+                           <span v-for="(temp ,index) in course" class="layui-col-sm4">
+                                <input type="checkbox" v-bind:value="temp.zid"  class="checkbox" lay-skin="primary" name="jineng" title=""
+                                lay-skin="primary"> {{temp.simpleName}}
+                           </span>
+                     </div>
+                </div>
+           </div>
+     </form>
+     </span>
+     <!-- <div class="layui-col-lg12 layui-col-md12" id="vmCourse">
+                     <form class="layui-form">
+                           <div class="layui-block">
+                                <div class="layui-input-inline">
+                                     <select name="简化多选" multiple lay-omit>
+                                           <option value="">请选择您的技能</option>
+                                           <option v-for="(temp ,index) in course">{{temp.simpleName}}</option>
+                                           <option value="1">sing1</option>
+                                           <option value="2" selected>sing2</option>
+                                           <option value="3">SING1-大写</option>
+                                           <option value="4">movie1</option>
+                                           <option value="5">movie2</option>
+                                           <option value="6">movie3</option>
+                                           <option value="7">MOVIE4</option>
+                                           <option value="8">swim</option>
+                                           <option value="9">moon</option>
+                                     </select>
+                                </div>
+                                <div class="layui-input-inline code">
+                                     &ltselect
+                                     <span style="color: red">multiple</span>
+                                     <span style="color: red">lay-omit</span>>
+                                </div>
+                           </div>
+                           <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                     <a class="layui-btn" lay-submit="" lay-filter="*">查看表单信息</a>
+                                </div>
+                           </div>
+                     </form>
+           </div> -->
+     <div class="unshow">
+           <pre id="result">
+     
+         </pre>
+     </div>
+     <form class="layui-form" action="">
+           <div class="layui-form-item">
+                <label for="inputEmail3" class="col-sm-2 control-label">电话</label>
+                <div class="col-sm-10">
+                     <input type="text" id="phone" class="form-control"
+                           style="width: 20%;">
+                </div>
+           </div>
+           <div class="layui-form-item">
+                <label for="inputEmail3" class="col-sm-2 control-label">身份证</label>
+                <div class="col-sm-10">
+                     <input type="text" id="identityCard" class="form-control"
+                           style="width: 40%;">
+                </div>
+           </div>
+           <div class="layui-form-item">
+                <label for="inputEmail3" class="col-sm-2 control-label">地址</label>
+                <div class="col-sm-10">
+                     <input type="text" id="address" class="form-control"
+                           style="width: 40%;">
+                </div>
+           </div>
+           <div class="layui-form-item">
+                <label for="inputPassword3" class="col-sm-2 control-label">教员简介</label>
+                <div class="col-sm-10">
+                     <textarea id="description" class="form-control" rows="8"
+                           placeholder=""></textarea>
+                </div>
+           </div>
+           <div class="layui-form-item">
+                <label for="inputEmail3" class="col-sm-2 control-label">密码</label>
+                <div class="col-sm-10">
+                     <input type="password" id="pwd" class="form-control"
+                           style="width: 20%;">
+                </div>
+           </div>
+           <div class="layui-form-item">
+                <label for="inputEmail3" class="col-sm-2 control-label">确认密码</label>
+                <div class="col-sm-10">
+                     <input type="password" id="affirmPwd" class="form-control"
+                           style="width: 20%;">
+                </div>
+           </div>
+           <div class="col-sm-offset-2 col-sm-10">
+                <button type="button" id="addTeacher" class="btn btn-default">保存</button>
+                <button class="btn btn-default" data-dismiss="modal">取消</button>
+           </div>
+     </form>
+	<!-- <form class="form-horizontal">
+           <div class="form-group">
+                     <label for="inputEmail3" class="col-sm-2 control-label">工号</label>
+                     <div class="col-sm-10">
+                           <input type="text" id="name" class="form-control" style="width: 20%;" >
+                     </div>
+                </div>
+           <div class="form-group">
+                <label for="inputEmail3" class="col-sm-2 control-label">姓名</label>
+                <div class="col-sm-10">
+                     <input type="text" id="name" class="form-control"
+                           style="width: 20%;">
+                </div>
+           </div>
+           <div class="form-group">
+                <label for="inputEmail3"
+                     class="col-sm-2 control-label checkbox-inline">性别</label>
+                <div class="col-sm-10">
+                     <input type="checkbox" class="form-control" style="width: 20%;">男
+                     <label class="checkbox-inline"> <input name="sex"
+                           type="checkbox"  value="option1"> 男
+                     </label> <label class="checkbox-inline"> <input type="checkbox"
+                           name="sex"  value="option1"> 女
+                     </label>
+                </div>
+           </div>
+           <div class="form-group" id="vmCourse">
+                <label for="inputEmail3" class="col-sm-2 control-label">技能</label>
+                <div class="col-sm-10">
+                     <div class="layui-row">
+                           <label class="checkbox-inline col-sm-3" v-for="(temp ,index) in course">
+                                      <input type="checkbox" v-bind:value="temp.zid"  class="checkbox" lay-skin="primary" name="jineng" title=""
+                                lay-skin="primary"> {{temp.simpleName}}
+                           </label>
+                     </div>
+                </div>
+           </div>
+           <div class="form-group">
+                <label for="inputEmail3" class="col-sm-2 control-label">电话</label>
+                <div class="col-sm-10">
+                     <input type="text" id="phone" class="form-control"
+                           style="width: 20%;">
+                </div>
+           </div>
+           <div class="form-group">
+                <label for="inputEmail3" class="col-sm-2 control-label">身份证</label>
+                <div class="col-sm-10">
+                     <input type="text" id="identityCard" class="form-control"
+                           style="width: 40%;">
+                </div>
+           </div>
+           <div class="form-group">
+                <label for="inputEmail3" class="col-sm-2 control-label">地址</label>
+                <div class="col-sm-10">
+                     <input type="text" id="address" class="form-control"
+                           style="width: 40%;">
+                </div>
+           </div>
+           <div class="form-group">
+                <label for="inputPassword3" class="col-sm-2 control-label">教员简介</label>
+                <div class="col-sm-10">
+                     <textarea id="description" class="form-control" rows="6"
+                           placeholder=""></textarea>
+                </div>
+           </div>
+           <div class="form-group">
+                <label for="inputEmail3" class="col-sm-2 control-label">密码</label>
+                <div class="col-sm-10">
+                     <input type="password" id="pwd" class="form-control"
+                           style="width: 40%;">
+                </div>
+           </div>
+ <div class="layui-form-item">
+                <label for="inputEmail3" class="col-sm-2 control-label">确认密码</label>
+                <div class="col-sm-10">
+                     <input type="password" id="affirmPwd" class="form-control"
+                           style="width: 20%;">
+                </div>
+           </div>
+           <div class="form-group">
+                <label for="inputEmail3" class="col-sm-2 control-label">地址</label>
+                <div class="col-sm-10">
+                     <input type="password" id="affirmPwd" class="form-control"
+                           style="width: 40%;">
+                </div>
+           </div>
+           <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                     <button type="button" id="addTeacher" class="btn btn-default">保存</button>
+                     <button class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+           </div>
+     </form>
+	<!-- ------------------------------ -->
+
+</body>
+<script src="layui/layui.js"></script>
+<script src="layui/lay/modules/form.js"></script>
+<script src="js/jquery-1.12.4.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/vue.js"></script>
+<script>
+	/*姓名身份证，手机号提交*/
+	// 验证姓名
+	function isChinaName(name) {
+		var pattern = /^[\u4E00-\u9FA5]{1,6}$/;
+		return pattern.test(name);
+	}
+
+	// 验证身份证
+	function isCardNo(card) {
+		var pattern = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
+		return pattern.test(card);
+	}
+
+	// 验证手机号
+	function isPhoneNo(phone) {
+		var pattern = /^1[34578]\d{9}$/;
+		return pattern.test(phone);
+	}
+
+	layui
+			.use(
+					[ 'form', 'code' ],
+					function() {
+						var form = layui.form, $ = layui.$;
+
+						// 代码块
+						layui.code({
+							title : 'html',
+							encode : true,
+							about : false
+
+						});
+
+						// 手动赋值
+						$('select[name="简化多选+搜索+大小写敏感"]').val(
+								[ 'sing1', 'movie2' ]);
+						form.render();
+
+						form.on('select(multi)', function(data) {
+							console.log(data.elem); //得到select原始DOM对象
+							console.log(data.value); //得到被选中的值
+							console.log(data.othis); //得到美化后的DOM对象
+							console.log(data.current_value); //当前操作的值
+						})
+
+						// 提交事件
+						form.on("submit(*)", function(data) {
+							$('#result').html(syntaxHighlight(data.field));
+							layer.open({
+								type : 1,
+								title : '提交信息',
+								shadeClose : true,
+								content : $('#result')
+							});
+							return false;
+						});
+
+						// json 格式化+高亮
+						function syntaxHighlight(json) {
+							if (typeof json != 'string') {
+								json = JSON.stringify(json, undefined, 2);
+							}
+							json = json.replace(/&/g, '&').replace(/</g, '<')
+									.replace(/>/g, '>');
+							return json
+									.replace(
+											/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
+											function(match) {
+												var cls = 'number';
+												if (/^"/.test(match)) {
+													if (/:$/.test(match)) {
+														cls = 'key';
+													} else {
+														cls = 'string';
+													}
+												} else if (/true|false/
+														.test(match)) {
+													cls = 'boolean';
+												} else if (/null/.test(match)) {
+													cls = 'null';
+												}
+												return '<span class="' + cls + '">'
+														+ match + '</span>';
+												testlxj = match;
+											});
+						}
+
+					});
+	$("#test").click(function() {
+
+	});
+	/* ---------------------------- */
+	$(document).ready(function() {
+		$('#example-multiple').multiselect();
+		$('#example-radio').multiselect();
+		$('#example-multiple-optgroups').multiselect();
+		$('#example-radio-optgroups').multiselect();
+		/* 
+		 *分组可选，可折叠，全选时不显示，所有option的数量 
+		 */
+		$('#example-enableClickableOptGroups').multiselect({
+			enableClickableOptGroups : true,
+			selectAllNumber : false
+		});
+		/* 
+		 *分组可选，可折叠，可全选，右侧显示下拉选项， 
+		 *触发选择事件，可搜索，可展示已选择option的数量（numberDisplayed） 
+		 */
+		$('#example-all').multiselect({
+			enableClickableOptGroups : true,
+			enableCollapsibleOptGroups : true,
+			includeSelectAllOption : true,
+			buttonWidth : '400px',
+			dropRight : true,
+			maxHeight : 200,
+			onChange : function(option, checked) {
+				alert($(option).val());
+				/*if(条件) { 
+				  this.clearSelection();//清除所有选择及显示 
+				}*/
+			},
+			nonSelectedText : '请选择',
+			numberDisplayed : 10,
+			enableFiltering : true,
+			allSelectedText : '全部',
+		});
+
+	});
+	/* ---------------------------- */
+
+	var vm = new Vue({
+		el : "#vmCourse",
+		data : {
+			course : []
+		}
+	});
+	function pagination() {
+		$.ajax({
+			type : 'GET',
+			url : 'http://localhost:8080/course/lxh_course/course',
+			dataType : 'json',
+			async : false, //这里设置为同步执行，目的是等数据加载完再调用layui分页组件，不然分页组件拿不到totalCount的值
+			success : function(data) {
+				vm.course = data;
+			}
+		});
+	};
+	/* 加载所以技能 */
+	pagination();
+	//Demo
+	$("#addTeacher").click(
+			function() {
+
+				var name = jQuery("#name").val();
+				var skill = jQuery("#skill").val();
+				var phone = jQuery("#phone").val();
+				var identityCard = jQuery("#identityCard").val();
+				var address = jQuery("#address").val();
+				var description = jQuery("#description").val();
+				var pwd = jQuery("#pwd").val();
+				var affirmPwd = jQuery("#affirmPwd").val();
+				var sex = jQuery("input[name='sex']").val();
+				var rsName = isChinaName(name);
+				var rsPhone = isPhoneNo(phone);
+				var rsIdentityCard = isCardNo(identityCard);
+				if (name == "" || name == null || rsName == false) {
+					layer.open({
+						title : '提示',
+						content : '姓名填写有误！'
+					});
+					return;
+				}
+
+				if (phone == "" || phone == null || rsPhone == false) {
+					layer.open({
+						title : '提示',
+						content : '联系电话有误！'
+					});
+					return;
+				}
+				if (identityCard == "" || identityCard == null
+						|| rsIdentityCard == false) {
+					layer.open({
+						title : '提示',
+						content : '身份证有误！'
+					});
+					return;
+				}
+
+				if (pwd !== affirmPwd) {
+					layer.open({
+						title : '提示',
+						content : '输入两次密码不一样！'
+					});
+					return;
+				}
+				if (pwd.length < 10) {
+					layer.open({
+						title : '提示',
+						content : '密码太短，请从新设置你的密码！'
+					});
+					return;
+				}
+
+				var id = [];
+				for (var i = 0; i < $(".checkbox").length; i++) {
+					if ($(".checkbox").eq(i).prop("checked")) {
+						id.push($(".checkbox").eq(i).val());
+
+					}
+				}
+				//组装json数据
+				var userInfo = {};
+				userInfo["name"] = name;
+				userInfo["pwd"] = pwd;
+				userInfo["classId"] = "";
+				userInfo["roleId"] = 3;
+				userInfo["sex"] = sex;
+				userInfo["identityCard"] = identityCard;
+				userInfo["phone"] = phone;
+				userInfo["address"] = address;
+				userInfo["isLocked"] = 0;
+				userInfo["description"] = description;
+				userInfo["img"] = "";
+				userInfo["state"] = 0;
+				userInfo["teacherandcourseId"] = id;
+				$.ajax("http://localhost:8080/course/lxh_userinfos/userinfo", {
+					"type" : "post",
+					"dataType" : "json",
+					"timeout" : 4000,
+					"data" : JSON.stringify(userInfo),
+					"contentType" : "application/json",
+					"success" : function(json) {
+						if (json.code == 200) {
+							layer.open({
+								title : '提示',
+								content : '新增成功！'
+							});
+							setTimeout(function() {
+								var index = parent.layer
+										.getFrameIndex(window.name); //获取窗口索引
+								parent.layer.close(index); // 关闭layer 
+								window.parent.location.reload(); //刷新父页面
+							}, 1500);
+						}
+					}
+				});
+
+				//alert(name+" "+skill+" "+phone+" "+identityCard+" "+address+" "+description+" "+pwd+" "+affirmPwd+" "+sex);
+			});
+</script>
+</html>

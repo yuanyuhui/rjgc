@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" href="css/bootstrap.min.css" />
+		<link rel="stylesheet" href="layui/css/layui.css" media="all">
+	</head>
+
+	<body>
+		<div style="display: flex;margin: 5px 5px 10px 30px;">
+			公告标题：
+			<input type="text" id="gtitle" />&nbsp;&nbsp;
+			<button class="layui-btn layui-btn-sm" style="width: 70px;" id="mocx"><i class="layui-icon">&#xe643;</i>查询</button>
+		</div>
+		<div style="display: flex;flex-direction: column;margin: 10px;padding: 0px;border: 1px solid #92B8B1;">
+			<div style="background-color: #92B8B1;display: flex;height: 20px;margin-bottom: 10px;">
+				<i class="layui-icon layui-icon-friends" style="color: darkslategrey;">公告信息列表</i>
+			</div>
+			<div style="margin-left: 30px;">
+				<a href="javascript:showWindowDialog('addNotice.html','发布公告');">
+					<button class="layui-btn layui-btn-sm ZZZ"><i class="layui-icon">&#xe654;</i>发布公告</button>
+				</a>
+				<button class="layui-btn layui-btn-sm ZZZ" id="udgg"><i class="layui-icon">&#xe640;</i>编辑公告</button>
+				<button class="layui-btn layui-btn-sm ZZZ" id="delgg"><i class="layui-icon">&#xe640;</i>刪除公告</button>
+			</div>
+			<div style="margin-left: 10px;">
+				<table class="layui-table" id="table">
+					<colgroup>
+						<col width="150">
+							<col width="200">
+								<col>
+					</colgroup>
+					<thead>
+						<tr>
+							<th>
+								<input type="checkbox" id="ggallbox" />
+							</th>
+							<th>编号</th>
+							<th>公告标题</th>
+							<th>发布时间</th>
+							<th>公告内容</th>
+						</tr>
+					</thead>
+					<tbody id="table">
+						<tr v-for="obj in grade">
+							<td>
+								<input type="checkbox" name="ggbox" />
+							</td>
+							<td v-text="obj.id"></td>
+							<td v-text="obj.title"></td>
+							<td v-text="obj.startTime"></td>
+							<td v-text="obj.title"></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		<!-- Modal -->
+		<div id="windowDialog" class="modal fade" data-backdrop="static" data-keyboard="false">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header" data-code="">
+						<button class="close" data-dismiss="modal">&times;</button>
+						<h4 class="modal-title">模块提示</h4>
+					</div>
+					<div class="modal-body"></div>
+				</div>
+			</div>
+		</div>
+
+	</body>
+	<script src="js/jquery-1.12.4.js"></script>
+	<script src="layui/layui.all.js"></script>
+	<script src="js/vue.js"></script>
+	<script type="text/javascript" src="js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="js/Dialog.js"></script>
+	<script>
+		$(function() {
+			var vm = new Vue({
+					el: "#table",
+					data: {
+						grade: []
+					},
+					created: function() {
+						$.getJSON("http://localhost:8080/course/notice/notice", function(data) {
+							vm.grade = data;
+						});
+					}
+				})
+				//公告编辑
+			$("#udgg").click(function() {
+				var code = $("[name=ggbox]:checked").parents("tr").find("td:eq(1)").text();
+				if (code == "") {
+					alert("请选择公告信息！")
+				} else {
+					showWindowDialogCode("updateNotice.html", "编辑公告信息", code);
+				}
+			});
+			//公告全选
+			$(document).on('click', "#ggallbox", function() {
+				var zt = $("#ggallbox").prop("checked");
+				$("[name=ggbox]").attr("checked", zt);
+			});
+			//删除公告
+			$("#delgg").click(function() {
+				var ch = $("[name=ggbox]:checked");
+				var arr = new Array();
+				$.each(ch, function(i, obj) {
+					arr.push($(obj).parents("tr").find("td:eq(1)").text());
+				});
+				$.ajax("http://localhost:8080/course/notice/notice", {
+					type: "delete",
+					dataType: "json",
+					data: JSON.stringify(arr),
+					contentType: "application/json",
+					success: function(data) {
+						if (data.code == 200) {
+							location.reload();
+							alert("刪除成功！");
+						}
+					}
+				})
+			});
+			//模糊查詢
+		$("#mocx").click(function() {
+			var code = $("#gtitle").val();
+			if(code==""){
+				alert("请输入!");
+			}else{
+				$.getJSON("http://localhost:8080/course/notice/notices/" + code, function(data) {
+				console.log(data);
+				vm.grade = data;
+			})
+			}
+		});
+		});
+	</script>
+
+</html>

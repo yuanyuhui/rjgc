@@ -1,0 +1,68 @@
+<html>
+
+<head>
+<meta charset="UTF-8">
+<title></title>
+<link rel="stylesheet" href="layui/css/layui.css" media="all">
+<style>
+tr {
+	margin-top: 20px;
+}
+</style>
+</head>
+
+<body>
+	<table class="layui-table">
+		<colgroup>
+			<col width="50">
+			<col width="200">
+			<col>
+		</colgroup>
+		<tbody>
+			<tr>
+				<th>公告标题</th>
+				<th id="title">11111111</th>
+			</tr>
+			<tr>
+				<th>公告内容</th>
+				<th id="content">于千万人之中遇见你所遇见的人，于千万年之中，时间的无涯的荒千万人之中遇见你所遇见的人，于千万年之中，时间的无涯的荒野里…野里…</th>
+			</tr>
+			<tr>
+				<th>开始日期</th>
+				<th id="startTime">2012-3-3</th>
+			</tr>
+			<tr>
+				<th>结束时间</th>
+				<th id="endTime">2012-3-8</th>
+			</tr>
+			<tr>
+				<th>发布人</th>
+				<th id="name">小陈</th>
+			</tr>
+			<tr>
+				<th>公告类型</th>
+				<th id="type">最新公告</th>
+			</tr>
+		</tbody>
+	</table>
+</body>
+<script src="js/jquery-1.12.4.js"></script>
+<script src="layui/layui.all.js"></script>
+<script>
+	//获取缓存
+	var noticeId = window.sessionStorage.getItem("noticeId");
+	if(noticeId){
+		$.getJSON("http://127.0.0.1:8080/course/api/notices/noticeById/"
+				+ noticeId, function(notice) {
+			$("#title").text(notice.title);
+			$("#content").text(notice.content);
+			$("#startTime").text(notice.startTime);
+			$("#endTime").text(notice.endTime);
+			$("#name").text(notice.creator);
+			$("#type").text(notice.name);
+		});
+	}
+	
+</script>
+
+</html>

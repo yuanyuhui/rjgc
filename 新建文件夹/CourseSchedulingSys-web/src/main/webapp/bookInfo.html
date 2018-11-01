@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>书本信息</title>
+		<link rel="stylesheet" type="text/css" href="layui/css/layui.css" media="all" />
+		<link rel="stylesheet" href="css/bootstrap.min.css" />
+
+		<style>
+			.da {
+				margin-top: -30px;
+				height: 70px;
+				display: flex;
+				justify-content: space-between;
+				border: #000000 solid 0px;
+			}
+			
+			.zong {
+				display: flex;
+				justify-content: flex-end;
+				border: #000000 solid 0px;
+			}
+			
+			.zong2 {
+				margin-top: 20px;
+				margin-left: -70px;
+			}
+			
+			.er {
+				width: 300px;
+			}
+			
+			.san {
+				margin-top: -10px;
+				display: flex;
+				flex-direction: row;
+				justify-content: flex-end;
+				flex-wrap: wrap;
+				height: auto;
+			}
+			
+			.yi {
+				height: auto;
+				border: 0px solid gray;
+				display: flex;
+				justify-content: flex-start;
+				margin-top: 10px;
+				/*background-color: #E6E6E6;*/
+			}
+			
+			.zhong {
+				text-align: center;
+				line-height: 40px;
+			}
+			
+			.layui-unselect {
+				width: 70px;
+			}
+			
+			.layui-input-block {
+				margin-left: 0px;
+			}
+			
+			.AAAAA {
+				line-height: 35px;
+				height: 40px;
+				border: 0px solid red;
+				background-color: #B1D2EC
+			}
+			
+			.AOP {
+				line-height: 35px;
+				height: 40px;
+				border: 0px solid red;
+				background-color: #B1D2EC
+			}
+			
+			.WW {
+				margin-left: 50px;
+				margin-top: 30px;
+				display: flex;
+			}
+			
+			.WWW {
+				margin-left: 50px;
+				margin-top: 10px;
+				display: flex;
+				margin-bottom: 20px;
+				text-align: center;
+			}
+			
+			.KKK {
+				height: 40px;
+				line-height: 40px;
+				width: 100px;
+				margin-left: 20px;
+				margin-right: 20px;
+			}
+			
+			.layui-form-item .layui-inline {
+				margin-bottom: 5px;
+				margin-right: -10px;
+			}
+			
+			.ZZZ {
+				margin-left: 20px;
+			}
+			
+			.pp {
+				margin-right: 20px;
+				margin-left: -10px;
+				margin-top: 10px;
+			}
+			
+			input[type=checkbox] {
+				width: 1px;
+			}
+			
+			#allChoose {
+				width: 30px;
+			}
+			
+			[name=fy] {
+				width: 30px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="AAAAA">
+			<i class="layui-icon" style="color: #007DDB;">&#xe66f;</i> 教材信息管理
+		</div>
+		<div class="WWW">
+			<div class="zhong">
+				筛选条件:
+			</div>
+			<div class="KKK" style="">
+				<select name="city" lay-verify="">
+					<option value="simpleName">书本简称名</option>
+					<option value="periodId">年级</option>
+					<option value="name">书本名称</option>
+				</select>
+			</div>
+			<div><input type="text" name="title" required lay-verify="required" autocomplete="off" class="layui-input" style="width: 300px;" value=""> </div>
+			<div><button class="layui-btn layui-btn-xs ZZZ" onclick="cx()"><i class="layui-icon" style="color:gold;">&#xe615;</i>查询</button></div>
+			<div><button class="layui-btn layui-btn-xs ZZZ" onclick="empty()"><i class="layui-icon" style="color:gold;">&#x1006;</i>清空</button></div>
+		</div>
+		<div class="da">
+			<div class="zong">
+
+				<div class="yi">
+					<div class="pp" id="zj"><button class="layui-btn layui-btn-xs ZZZ"><i class="layui-icon" style="color:gold;">&#xe654;</i>增加</button></div>
+					
+					<div class="pp" onclick="compile()"><button class="layui-btn layui-btn-xs ZZZ"><i class="layui-icon" style="color:gold;">&#xe642;</i>编辑</button></div>
+					
+					<div class="pp" id="sc"><button class="layui-btn layui-btn-xs ZZZ" onclick="deletechecklis()"><i class="layui-icon" style="color:gold;">&#xe615;</i>删除</button></div>
+				</div>
+
+			</div>
+
+		</div>
+		<table class="layui-table">
+			<thead>
+				<tr>
+					<th><input type="checkbox" name="checkbox" onclick="checkboxed('checkbox')" lay-skin="primary" lay-filter="allChoose" id="allChoose"></th>
+					<th>书本id</th>
+					<th>年级编号</th>
+					<th>书本名称</th>
+					<th>书本简称</th>
+					<th>操作</th>
+				</tr>
+			</thead>
+			<form>
+				<tbody id="vmCourse">
+					<tr v-for="(temp,index) in Course">
+						<th><input type="checkbox" name="checkbox" lay-skin="primary" lay-filter="allChoose" id="allChoose" v-bind:value="temp.zid" /></th>
+						<th>{{temp.zid}}</th>
+						<th v-if="temp.periodId==1">S1</th>
+						<th v-if="temp.periodId==2">S2</th>
+						<th v-if="temp.periodId==3">Y2</th>
+						<th>{{temp.name}}</th>
+						<th>{{temp.simpleName}}</th>
+						<th>
+							<a @click="ckxq(temp.zid,temp.periodId)" href="#"><i class="layui-icon layui-icon-search"></i></a>
+						</th>
+					</tr>
+				</tbody>
+			</form>
+		</table>
+		<div id="pagination"></div>
+
+	</body>
+	<script src="layui/layui.js"></script>
+	<script src="layui/lay/modules/form.js"></script>
+	<script src="js/jquery-1.12.4.js"></script>
+	<script type="text/javascript" src="js/vue.js"></script>
+	<script>
+		var pageIndex = 1;
+		var pageSize = 10;
+		var totalCount = 0;
+		var layer;
+		var type = "null";
+		var condition = "null";
+
+		/**
+		 * layui分页
+		 */
+		layui.use(['laypage', 'layer'], function() {
+			layer = layui.layer;
+			var laypage = layui.laypage;
+			laypage.render({
+				elem: 'pagination',
+				count: totalCount,
+				layout: ['count', 'prev', 'page', 'next', 'limit', 'refresh', 'skip'],
+				jump: function(obj, first) {
+					//点击非第一页页码时的处理逻辑。比如这里调用了ajax方法，异步获取分页数据
+					if(!first) {
+						pagination(obj.curr, obj.limit, type, condition); //第二个参数不能用变量pageSize，因为当切换每页大小的时候会出问题
+					}
+				}
+			});
+		});
+
+		function cx() {
+			type = jQuery("[name=city]").val();
+			condition = jQuery("[name=title]").val();
+			pagination(pageIndex, pageSize, type, condition);
+		}
+
+		jQuery(document).ajaxError(function() {
+			layer.alert("服务器异常!");
+		});
+
+		function empty() {
+			jQuery("[name=title]").val("");
+		}
+
+		function checkboxed(objName) {
+			var objNameList = document.getElementsByName(objName);
+			if(null != objNameList) {
+				if(objNameList[0].checked) {
+					for(var i = 0; i < objNameList.length; i++) {
+						objNameList[i].checked = "checked";
+					}
+				} else {
+					for(var i = 0; i < objNameList.length; i++) {
+						objNameList[i].checked = "";
+					}
+				}
+			}
+		}
+		
+		function compile() {
+			var json = {};
+			var objNameList = jQuery("[type=checkbox]");
+			var num = 0;
+			if(null != objNameList) {
+				for(var i = 1; i < objNameList.length; i++) {
+					if(objNameList[i].checked) {
+						num++;
+					}
+				}
+				if(num > 1) {
+					layer.alert('不能同时编辑多个信息！');
+					return;
+				} else if(num < 1) {
+					layer.alert("请选择");
+					return;
+				} else {
+					for(var i = 1; i < objNameList.length; i++) {
+						if(objNameList[i].checked) {
+							window.sessionStorage.setItem("zzzid", objNameList[i].value)
+						}
+					}
+					layer.open({
+						type: 2,
+						title: ['编辑教材信息', 'font-size:18px;'],
+						content: 'upcorsevo.html',
+						area: ['1000px', '450px'],
+						skin: 'demo-class',
+						anim: 5,
+						maxmin: true,
+						end: function() {
+							pagination(pageIndex, pageSize, type, condition);
+						}
+					});
+				}
+			}
+		}
+
+		function deletechecklis() {
+			var objNameList = jQuery("[type=checkbox]");
+			var num = 0;
+			for(var i = 1; i < objNameList.length; i++) {
+				if(objNameList[i].checked) {
+					num++;
+				}
+			}
+			if(num < 1) {
+				layer.alert("请选择!");
+				return;
+			}
+
+			layer.confirm('是否确认删除?', function(index) {
+				var zid = new Array();
+				var para = jQuery("[type=checkbox]").serializeArray();
+				jQuery.each(para, function(e, b) {
+					zid.push(b.value);
+				});
+				$.ajax({
+					url: "http://127.0.0.1:8080/course/yyhCourse/cousevo3/" + zid,
+					type: "delete",
+					dataType: "json",
+					success: function(data) {
+						layer.alert(data.msg);
+						pagination(pageIndex, pageSize, type, condition);
+					}
+				});
+			});
+		}
+
+		jQuery("#zj").click(function() {
+			layer.open({
+				type: 2,
+				title: ['添加书本信息', 'font-size:18px;'],
+				content: 'addcorse.html',
+				area: ['1000px', '450px'],
+				skin: 'demo-class',
+				anim: 5,
+				maxmin: true,
+				end: function() {
+					pagination(pageIndex, pageSize, type, condition);
+				}
+			});
+		});
+
+		/**
+		 * vue模板数据渲染
+		 */
+		var vm = new Vue({
+			el: "#vmCourse",
+			data: {
+				Course: []
+			},
+			methods: {
+				ckxq: function(zid, periodId) {
+					window.sessionStorage.setItem("zid", zid);
+					window.sessionStorage.setItem("periodId", periodId);
+					layer.open({
+						type: 2,
+						title: ['书本详细信息', 'font-size:18px;'],
+						content: 'coursevolist.html',
+						area: ['1000px', '450px'],
+						skin: 'demo-class',
+						anim: 5,
+						maxmin: true,
+						end: function() {
+							pagination(pageIndex, pageSize, type, condition);
+						}
+					});
+				}
+			}
+		});
+
+		pagination(pageIndex, pageSize, type, condition);
+
+		function pagination(pageIndex, pageSize, type, condition) {
+			if(type == "") {
+				type = "null";
+			}
+			if(condition == "") {
+				condition = "null";
+			}
+			var xuan = $("[name=checkbox]");
+			for(var i in xuan) {
+				xuan[i].checked = false;
+			}
+			jQuery.ajax({
+				type: 'POST',
+				url: 'http://127.0.0.1:8080/course/yyhCourse/CourseVo/' + pageIndex + '/' + pageSize + '/' + type + '/' + condition,
+				dataType: 'json',
+				async: false, //这里设置为同步执行，目的是等数据加载完再调用layui分页组件，不然分页组件拿不到totalCount的值
+				success: function(data) {
+					vm.Course = data.list;
+					totalCount = data.total;
+					pageinfo(data);
+				}
+			});
+		};
+
+		function pageinfo(data) {
+			layui.use(['laypage', 'layer'], function() {
+				layer = layui.layer;
+				var laypage = layui.laypage;
+				laypage.render({
+					elem: 'pagination',
+					count: data.total,
+					curr: data.pageNum,
+					layout: ['count', 'prev', 'page', 'next', 'limit', 'refresh', 'skip'],
+					jump: function(obj, first) {
+						//点击非第一页页码时的处理逻辑。比如这里调用了ajax方法，异步获取分页数据
+						if(!first) {
+							pagination(obj.curr, obj.limit, type, condition); //第二个参数不能用变量pageSize，因为当切换每页大小的时候会出问题
+						}
+					}
+				});
+			});
+		}
+	</script>
+
+</html>

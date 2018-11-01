@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<title>教员课表</title>
+		<link rel="stylesheet" href="layui/css/layui.css">
+		<style>
+			#head {
+				display: flex;
+			}
+			
+			#title {
+				padding-top: 10px;
+			}
+			
+			#Teachertitle {
+				margin-top: 10px;
+				margin-bottom: 10px;
+			}
+			
+			/*设置文本居中*/
+			
+			table * {
+				text-align: center;
+			}
+			
+			#Teachertitle .layui-col-md3 {
+				line-height: 30px;
+			}
+			
+			.layui-table {
+				margin-top: 0px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="layui-fluid">
+			<div id="head">
+				<div id="title">
+					教员：
+				</div>
+				<div class="layui-container">
+					<form class="layui-form" action="" class="layui-row">
+						<div class="layui-col-md2">
+							<select name="city" lay-verify="">
+								<option value="">李明</option>
+								<option value="1801">小明</option>
+								<option value="1802">大名</option>
+								<option value="1803">大明</option>
+								<option value="1804">小赖</option>
+								<option value="1805">小六</option>
+							</select>
+						</div>
+
+						<div class="layui-inline layui-col-md1 layui-col-md-offset1">
+							<input type="text" class="layui-input" id="begin">
+						</div>
+						<div class="layui-col-md1" style="text-align:center;margin-top: 5px;">~</div>
+						<div class="layui-inline layui-col-md1">
+							<input type="text" class="layui-input" id="end">
+						</div>
+						<button class="layui-btn layui-btn-radius layui-btn-normal layui-btn-md" style="margin-left: 30px;">查询</button>
+					</form>
+
+				</div>
+
+			</div>
+			<div id="Teachertitle" class="layui-row">
+				<div class="layui-col-md3">
+					<i class="layui-icon layui-icon-username"></i> 教员课表
+				</div>
+
+			</div>
+			<!--表格-->
+			<div>
+				<table class="layui-table">
+					<thead>
+						<tr>
+							<th rowspan="2" style="text-align: center;">日期</th>
+							<th rowspan="2" style="text-align: center;">星期</th>
+							<th colspan="3" style="text-align: center;">上午</th>
+							<th colspan="3" style="text-align: center;">下午</th>
+						</tr>
+						<tr>
+							<td>教师</td>
+							<td>教室/机房</td>
+							<td>课程</td>
+							<td>教师</td>
+							<td>教室/机房</td>
+							<td>课程</td>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>08-13</td>
+							<td>星期一</td>
+							<td>李明</td>
+							<td>203</td>
+							<td>CB182</td>
+							<td>李明</td>
+							<td>203</td>
+							<td>CB182</td>
+						</tr>
+						<tr>
+							<td>08-13</td>
+							<td>星期一</td>
+							<td>李明</td>
+							<td>203</td>
+							<td>CB182</td>
+							<td>李明</td>
+							<td>203</td>
+							<td>CB182</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+		</div>
+	</body>
+	<script src="layui/layui.all.js"></script>
+	<script>
+		layui.use('laydate', function() {
+			var laydate = layui.laydate;
+
+			//执行一个laydate实例
+			laydate.render({
+				elem: '#begin' //指定元素
+			});
+			laydate.render({
+				elem: '#end' //指定元素
+			});
+		});
+	</script>
+
+</html>

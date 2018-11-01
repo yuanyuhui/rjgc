@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<title>株洲建坤教务排课系统</title>
+		<link rel="stylesheet" type="text/css" href="layui/css/layui.css" />
+		<link rel="stylesheet" type="text/css" href="layui/css/modules/code.css" />
+		<style type="text/css">
+			html {
+				font-size: 12px;
+			}
+			
+			.logo {
+				position: absolute;
+				left: 0;
+				top: 0;
+				width: 20rem;
+				height: 100%;
+				line-height: 60px;
+				text-align: center;
+				color: #FFF9EC;
+				font-size: 2rem;
+			}
+			
+			.logo:hover {
+				color: #FFF9EC;
+			}
+			
+			.layui-layout-left {
+				left: 20rem;
+			}
+			
+			.item1 {
+				left: 3rem;
+			}
+			
+			.item2 {
+				left: 6rem;
+			}
+			
+			.item3 {
+				left: 7rem;
+			}
+			
+			.badge1 {
+				left: 9rem;
+			}
+			
+			.col {
+				cursor: pointer;
+			}
+			
+			.col:hover {
+				color: #4169E1;
+			}
+			
+			.icon1 {
+				padding-right: 0.6rem;
+			}
+			
+			.dd1 {
+				padding-left: 1.2rem;
+			}
+			
+			.layui-tab-content {
+				padding: 0px;
+			}
+			
+			.layui-layout-admin .layui-body {
+				bottom: 32px;
+			}
+			
+			.layui-layout-admin .layui-footer {
+				line-height: 32px;
+				height: 32px;
+			}
+			
+			.rightmenu {
+				display: none;
+				position: absolute;
+				background-color: white;
+				padding: 10px;
+				cursor: pointer;
+				border: 1px solid #cecece;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="layui-layout-admin">
+			<div class="layui-header">
+				<div class="layui-main">
+					<a href="javascript:;" class="logo" title="株洲建坤教务排课系统">株洲建坤教务排课系统</a>
+					<ul class="layui-nav layui-layout-left">
+						<li class="layui-nav-item" lay-unselect>
+							<a href="javascript:;" title="侧边收缩" id="right-a" boolean="false">
+								<i class="layui-icon layui-icon-shrink-right"></i>
+							</a>
+						</li>
+						<!--<li class="layui-nav-item">
+							<a data-url="题目管理/question" data-id="11" data-title="题目管理" data-type="tabAdd" href="javascript:;" class="site-demo-active">题目管理<span class="layui-badge">Hot</span></a>
+						</li>
+						<li class="layui-nav-item item1">
+							<a data-url="试卷管理/test" data-id="12" data-title="试卷管理" data-type="tabAdd" href="javascript:;" class="site-demo-active">试卷管理<span class="layui-badge">Hot</span></a>
+						</li>
+						<li class="layui-nav-item item2">
+							<a data-url="用户管理/indexLogin" data-id="13" data-title="用户管理" data-type="tabAdd" href="javascript:;" class="site-demo-active">用户</a>
+						</li>
+						<li class="layui-nav-item item3">
+							<a href="javascript:;">其它系统</a>
+							<dl class="layui-nav-child">
+								<dd>
+									<a data-url="a" data-id="15" data-title="授权管理" data-type="tabAdd" href="javascript:;" class="site-demo-active">授权管理</a>
+								</dd>
+							</dl>
+						</li>-->
+					</ul>
+					<ul class="layui-nav layui-layout-right">
+						<li class="layui-nav-item" style="margin-right: 20px;">
+							<a href="javascript:;">
+								<img src="img/wyIcon.png" class="layui-nav-img">王颖<span class="layui-badge badge1">6</span>
+							</a>
+							<dl class="layui-nav-child">
+								<dd>
+									<a data-url="用户管理/gr" data-id="14" data-title="修改密码" data-type="tabAdd" href="javascript:;" class="site-demo-active tab1" ui-id="1">修改密码<span class="layui-badge">&nbsp;&nbsp;6</span></a>
+								</dd>
+								<dd>
+									<a data-url="a" data-id="17" data-title="安全设置" data-type="tabAdd" href="javascript:;" class="site-demo-active">安全设置</a>
+								</dd>
+							</dl>
+						</li>
+						<li class="layui-nav-item">
+							<a href="login.html">退出登录</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+
+			<!-- 左侧导航 -->
+			<div class="layui-side layui-bg-black" id="black">
+				<ul class="layui-nav layui-nav-tree" lay-filter="test" lay-shrink="all">
+					<!-- 侧边导航: <ul class="layui-nav layui-nav-tree layui-nav-side"> -->
+					<li class="layui-nav-item">
+						<a data-url="new_file" data-id="1" data-title="后台首页" data-type="tabAdd" href="javascript:;" class="tab site-demo-active"><i class="layui-icon layui-icon-radio icon1"></i>后台首页</a>
+					</li>
+					<li class="layui-nav-item">
+						<a href="javascript:;"><i class="layui-icon layui-icon-radio icon1"></i>基础数据管理</a>
+						<dl class="layui-nav-child" id="KQ-MK-001">
+							<!--<dd class="dd1">
+								<a data-url="studentInfo" data-id="2" data-title="学员信息管理" data-type="tabAdd" href="javascript:;" class="tab site-demo-active"><i class="layui-icon layui-icon-list icon1"></i>学员信息管理</a>
+							</dd>
+							<dd class="dd1">
+								<a data-url="teacherInfo" data-id="3" data-title="教员信息管理" data-type="tabAdd" href="javascript:;" class="tab site-demo-active"><i class="layui-icon layui-icon-list icon1"></i>教员信息管理</a>
+							</dd>
+							<dd class="dd1">
+								<a data-url="classTeacherInfo" data-id="4" data-title="班主任信息管理" data-type="tabAdd" href="javascript:;" class="tab site-demo-active"><i class="layui-icon layui-icon-list icon1"></i>班主任信息管理</a>
+							</dd>
+							<dd class="dd1">
+								<a data-url="teachInfoms" data-id="5" data-title="教务信息管理" data-type="tabAdd" href="javascript:;" class="tab site-demo-active"><i class="layui-icon layui-icon-list icon1"></i>教务信息管理</a>
+							</dd>
+							<dd class="dd1">
+								<a data-url="classInfo" data-id="6" data-title="班级信息管理" data-type="tabAdd" href="javascript:;" class="tab site-demo-active"><i class="layui-icon layui-icon-list icon1"></i>班级信息管理</a>
+							</dd>
+							<dd class="dd1">
+								<a data-url="grade" data-id="7" data-title="学期信息管理" data-type="tabAdd" href="javascript:;" class="tab site-demo-active"><i class="layui-icon layui-icon-list icon1"></i>学期信息管理</a>
+							</dd>
+							<dd class="dd1">
+								<a data-url="classroomInfo" data-id="8" data-title="教室机房信息管理" data-type="tabAdd" href="javascript:;" class="tab site-demo-active"><i class="layui-icon layui-icon-list icon1"></i>教室机房信息管理</a>
+							</dd>
+							<dd class="dd1">
+								<a data-url="courseInfo" data-id="9" data-title="课程信息管理" data-type="tabAdd" href="javascript:;" class="tab site-demo-active"><i class="layui-icon layui-icon-list icon1"></i>课程信息管理</a>
+							</dd>
+						</dl>-->
+					</li>
+					<li class="layui-nav-item">
+						<a href="javascript:;"><i class="layui-icon layui-icon-radio icon1"></i>排课管理</a>
+						<dl class="layui-nav-child" id="KQ-MK-010">
+							<!--<dd class="dd1">
+								<a data-url="plan" data-id="10" data-title="排课计划" data-type="tabAdd" href="javascript:;" class="tab site-demo-active"><i class="layui-icon layui-icon-list icon1"></i>排课计划</a>
+							</dd>
+							<dd class="dd1">
+								<a data-url="totalTimeTable" data-id="11" data-title="总课表" data-type="tabAdd" href="javascript:;" class="tab site-demo-active"><i class="layui-icon layui-icon-list icon1"></i>总课表</a>
+							</dd>
+							<dd class="dd1">
+								<a data-url="newHeadTeacherCurriculum" data-id="12" data-title="班主任课表" data-type="tabAdd" href="javascript:;" class="tab site-demo-active"><i class="layui-icon layui-icon-list icon1"></i>班主任课表</a>
+							</dd>
+							<dd class="dd1">
+								<a data-url="newTeacherCurriculum" data-id="13" data-title="教员课表" data-type="tabAdd" href="javascript:;" class="tab site-demo-active"><i class="layui-icon layui-icon-list icon1"></i>教员课表</a>
+							</dd>
+							<dd class="dd1">
+								<a data-url="newStudentCurriculum" data-id="14" data-title="学员课表" data-type="tabAdd" href="javascript:;" class="tab site-demo-active"><i class="layui-icon layui-icon-list icon1"></i>学员课表</a>
+							</dd>
+							<dd class="dd1">
+R							</dd>
+							<dd class="dd1">
+								<a data-url="待定" data-id="16" data-title="排课基本信息管理" data-type="tabAdd" href="javascript:;" class="tab site-demo-active"><i class="layui-icon layui-icon-list icon1"></i>排课基本信息管理</a>
+							</dd>-->
+						</dl>
+					</li>
+					<li class="layui-nav-item">
+						<a href="javascript:;"><i class="layui-icon layui-icon-radio icon1"></i>课时统计</a>
+						<dl class="layui-nav-child" id="KQ-MK-013">
+							<!--<dd class="dd1">
+								<a data-url="statistics" data-id="17" data-title="课时统计" data-type="tabAdd" href="javascript:;" class="tab site-demo-active"><i class="layui-icon layui-icon-list icon1"></i>课时统计</a>
+							</dd>-->
+						</dl>
+					</li>
+					<li class="layui-nav-item">
+						<a href="javascript:;"><i class="layui-icon layui-icon-radio icon1"></i>系统管理</a>
+						<dl class="layui-nav-child" id="KQ-MK-015">
+							<!--<dd class="dd1">
+								<a data-url="userInfo" data-id="18" data-title="个人信息管理" data-type="tabAdd" href="javascript:;" class="tab site-demo-active"><i class="layui-icon layui-icon-list icon1"></i>个人信息管理</a>
+							</dd>
+							<dd class="dd1">
+								<a data-url="gg" data-id="19" data-title="公告管理" data-type="tabAdd" href="javascript:;" class="tab site-demo-active"><i class="layui-icon layui-icon-list icon1"></i>公告管理</a>
+							</dd>
+							<dd class="dd1">
+								<a data-url="function" data-id="20" data-title="权限管理" data-type="tabAdd" href="javascript:;" class="tab site-demo-active"><i class="layui-icon layui-icon-list icon1"></i>权限管理</a>
+							</dd>
+							<dd class="dd1">
+								<a data-url="new_file" data-id="21" data-title="主页" data-type="tabAdd" href="javascript:;" class="tab site-demo-active"><i class="layui-icon layui-icon-list icon1"></i>主页</a>
+							</dd>-->
+						</dl>
+					</li>
+
+				</ul>
+			</div>
+
+			<!-- 右侧主体 -->
+			<div class="layui-body layui-form">
+				<div class="layui-tab layui-tab-card" style="margin: 0px;" lay-allowClose="true" lay-filter="tab_">
+					<ul class="layui-tab-title">
+
+					</ul>
+					<ul class="rightmenu">
+						<li data-type="closethis" class="col" style="cursor: pointer;">关闭当前</li>
+						<hr />
+						<li data-type="closeall" class="col" style="cursor: pointer;">关闭所有</li>
+					</ul>
+					<div class="layui-tab-content">
+
+					</div>
+				</div>
+			</div>
+
+			<div class="layui-footer" style="text-align: center;">
+				株洲建坤教务排课系统
+			</div>
+
+		</div>
+
+		<input type="text" id="search-input" value="" class="layui-hide" />
+
+	</body>
+	<script src="js/jquery-1.12.4.js" type="text/javascript" charset="utf-8"></script>
+	<script src="layui/layui.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript" src="js/bootstrap.min.js"></script>
+	<script type="text/javascript">
+		jQuery(function() {
+			var user = JSON.parse(sessionStorage.getItem("user"));
+			console.log(user);
+			if(user == null) {
+				jQuery("#black ul li:gt(0)").hide();
+				return;
+			}
+			if(user.roleId == 1) {
+				jQuery.getJSON("http://127.0.0.1:8080/course/yyhAuthorit/Authorit", function(data) {
+					console.log(data)
+					jQuery.each(data, function(e, b) {
+						console.log(b.parentId)
+						var dd = jQuery('<dd class="dd1">' +
+							'<a data-url=' + b.url + ' data-id=' + b.id + ' data-title=' + b.name + ' data-type="tabAdd" href="javascript:;" class="tab site-demo-active"><i class="layui-icon layui-icon-list icon1"></i>' + b.name + '</a>' +
+							'</dd>');
+						jQuery("#" + b.parentId).append(dd);
+					});
+				});
+			} else {
+				jQuery.each(user.role.funsctions, function(e, b) {
+					var dd = jQuery('<dd class="dd1">' +
+						'<a data-url=' + b.url + ' data-id=' + b.id + ' data-title=' + b.name + ' data-type="tabAdd" href="javascript:;" class="tab site-demo-active"><i class="layui-icon layui-icon-list icon1"></i>' + b.name + '</a>' +
+						'</dd>');
+					jQuery("#" + b.parentId).append(dd);
+				});
+				jQuery.each(jQuery("#black ul li dl"), function(e, b) {
+					if(jQuery(this).children().length == 0) {
+						jQuery(this).parent().hide();
+					}
+				});
+			}
+
+		});
+
+		//注意：导航 依赖 element 模块，否则无法进行功能性操作
+		layui.use(['element', 'form', 'laydate', 'jquery', 'table', 'laypage'], function() {
+			var element = layui.element,
+				form = layui.form,
+				laydate = layui.laydate,
+				$ = layui.$,
+				table = layui.table
+			laypage = layui.laypage;
+
+			//触发事件
+			var active = {
+				//在这里给active绑定几项事件，后面可通过active调用这些事件
+				tabAdd: function(url, id, name) {
+					//新增一个Tab项 传入三个参数，分别对应其标题，tab页面的地址，还有一个规定的id，是标签中data-id的属性值
+					//关于tabAdd的方法所传入的参数可看layui的开发文档中基础方法部分
+					element.tabAdd('tab_', {
+						title: name,
+						content: '<iframe data-frameid="' + id + '" scrolling="auto" frameborder="0" src="' + url + '.html" style="width:100%;height:99%;"></iframe>',
+						id: id //规定好的id
+					})
+					CustomRightClick(id); //给tab绑定右击事件
+					FrameWH(); //计算ifram层的大小
+				},
+				tabChange: function(id) {
+					//切换到指定Tab项
+					element.tabChange('tab_', id); //根据传入的id传入到指定的tab项
+				},
+				tabDelete: function(id) {
+					element.tabDelete("tab_", id); //删除
+				},
+				tabDeleteAll: function(ids) { //删除所有
+					$.each(ids, function(i, item) {
+						element.tabDelete("tab_", item); //ids是一个数组，里面存放了多个id，调用tabDelete方法分别删除
+					})
+				}
+			};
+
+			//当点击有site-demo-active属性的标签时，即左侧菜单栏中内容 ，触发点击事件
+			$('.site-demo-active').on('click', function() {
+				var dataid = $(this);
+
+				//这时会判断右侧.layui-tab-title属性下的有lay-id属性的li的数目，即已经打开的tab项数目
+				if($(".layui-tab-title li[lay-id]").length <= 0) {
+					//如果比零小，则直接打开新的tab项
+					active.tabAdd(dataid.attr("data-url"), dataid.attr("data-id"), dataid.attr("data-title"));
+				} else {
+					//否则判断该tab项是否以及存在
+
+					var isData = false; //初始化一个标志，为false说明未打开该tab项 为true则说明已有
+					$.each($(".layui-tab-title li[lay-id]"), function() {
+						//如果点击左侧菜单栏所传入的id 在右侧tab项中的lay-id属性可以找到，则说明该tab项已经打开
+						if($(this).attr("lay-id") == dataid.attr("data-id")) {
+							isData = true;
+						}
+					})
+					if(isData == false) {
+						//标志为false 新增一个tab项
+						active.tabAdd(dataid.attr("data-url"), dataid.attr("data-id"), dataid.attr("data-title"));
+					}
+				}
+				//最后不管是否新增tab，最后都转到要打开的选项页面上
+				active.tabChange(dataid.attr("data-id"));
+			});
+
+			function CustomRightClick(id) {
+				//取消右键  rightmenu属性开始是隐藏的 ，当右击的时候显示，左击的时候隐藏
+				$('.layui-tab-title li').on('contextmenu', function() {
+					return false;
+				});
+				$('.layui-tab-title,.layui-tab-title li').click(function() {
+					$('.rightmenu').hide();
+				});
+
+				//桌面点击右击 
+				$('.layui-tab-title li').on('contextmenu', function(e) {
+					var popupmenu = $(".rightmenu");
+					popupmenu.find("li").attr("data-id1", id); //在右键菜单中的标签绑定id属性
+
+					//判断右侧菜单的位置 
+					l = ($(document).width() - e.clientX) < popupmenu.width() ? (e.clientX - popupmenu.width()) : e.clientX;
+					t = ($(document).height() - e.clientY) < popupmenu.height() ? (e.clientY - popupmenu.height()) : e.clientY;
+					popupmenu.css({
+						left: l - 200,
+						top: t - 62
+					}).show(); //进行绝对定位
+					//alert("右键菜单")
+					return false;
+				});
+			};
+
+			$(".rightmenu li").click(function() {
+				//右键菜单中的选项被点击之后，判断type的类型，决定关闭所有还是关闭当前。
+				if($(this).attr("data-type") == "closethis") {
+					//如果关闭当前，即根据显示右键菜单时所绑定的id，执行tabDelete
+					active.tabDelete($(this).attr("data-id1"))
+				} else if($(this).attr("data-type") == "closeall") {
+					var tabtitle = $(".layui-tab-title li");
+					var ids = new Array();
+					$.each(tabtitle, function(i) {
+						ids[i] = $(this).attr("lay-id");
+					})
+					//如果关闭所有 ，即将所有的lay-id放进数组，执行tabDeleteAll
+					active.tabDeleteAll(ids);
+				}
+
+				$('.rightmenu').hide(); //最后再隐藏右键菜单
+			});
+
+			function FrameWH() {
+				var h = $(window).height() - 41 - 60 - 37;
+				$("iframe").css("height", h + "px");
+			};
+
+			$(window).resize(function() {
+				FrameWH();
+			});
+
+			$(".tab1").on("click", function() {
+				var id = $(this).attr("ui-id");
+				$(this).find("span").text("");
+				$(this).find("span").css("display", "none");
+
+				if(id == 1) {
+					$(this).parent().parent().prev().find("span:eq(0)").text("");
+					$(this).parent().parent().prev().find("span:eq(0)").css("display", "none");
+				}
+			});
+
+			$("#right-a").on("click", function() {
+				if($(this).attr("boolean") == "false") {
+					$("#black").animate({
+						"width": 0
+					}, 1000);
+					$(this).attr("boolean", "true");
+					$(".layui-body").animate({
+						"left": 0
+					}, 1000);
+					$(".layui-body").css("left", "0px");
+					return false;
+				} else if($(this).attr("boolean") == "true") {
+					$("#black").animate({
+						"width": 200
+					}, 1000);
+					$(this).attr("boolean", "false");
+					$(".layui-body").animate({
+						"left": 200
+					}, 1000);
+					$(".layui-body").css("left", "200px");
+					return false;
+				}
+			});
+		});
+	</script>
+
+</html>

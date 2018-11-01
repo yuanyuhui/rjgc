@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" href="css/bootstrap.min.css" />
+		<!--<link rel="stylesheet" href="layui/css/layui.css" media="all">-->
+
+	</head>
+
+	<body>
+		<form class="form-horizontal" id="editForm">
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">课程编号</label>
+				<div class="col-sm-10">
+					<input type="text" id="courseId" class="form-control" style="width: 40%;" disabled="disabled" >
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">课程名</label>
+				<div class="col-sm-10">
+					<input type="text" id="name" class="form-control" style="width: 40%;" >
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">课程简称</label>
+				<div class="col-sm-10">
+					<input type="text" id="simpleName" class="form-control" style="width: 40%;" >
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">所属教材</label>
+				<div class="col-sm-10">
+					<select class="form-control" style="width: 40%;" id="parentCourse">
+						<option value="0">请选择</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">所属年级</label>
+				<div class="col-sm-10">
+					<select class="form-control" style="width: 20%;text-align: center;" id="periodId">
+						<option value='1'>S1</option>
+						<option value='2'>S2</option>
+						<option value='3'>Y2</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">所需课时</label>
+				<div class="col-sm-10">
+					<input type="text" id="courseCount" class="form-control" style="width: 30%;" >
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-10">
+					<button class="btn btn-default" id="updateCourse">保存</button>
+					<button class="btn btn-default" data-dismiss="modal">取消</button>					
+				</div>
+			</div>
+		</form>
+	</body>
+	<script src="js/jquery-1.12.4.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script>
+		
+		
+		
+		
+	
+		$(function(){
+			var parentId;
+			var myLayer;	
+			var id = $(".modal-header").attr("data-code");
+			
+			layui.use('layer', function() {
+				myLayer = layui.layer;
+			});
+			loadCourseInfo();
+			
+			
+			function loadCourseInfo(){
+				$.getJSON("/course/courses/pCourse",function(data){
+					var select1 = $("#parentCourse");
+					$.each(data,function(i,obj){
+						select1.append("<option value='"+obj.zid+"'>"+obj.name+"</option>");
+					});
+					$("#parentCourse").val(parentId);
+				});
+				
+				$.getJSON("/course/courses/course/"+id,function(data){
+					$("#courseId").val(data.id);
+					parentId = data.parentId;
+					$("#parentCourse").val(data.parentId);
+					$("#name").val(data.name);
+					$("#simpleName").val(data.simpleName);
+					$("#courseCount").val(data.courseCount);
+					$("#periodId").val(data.periodId);
+				});
+			}
+			
+			
+			
+			$(document).on("click","#updateCourse",function(){
+				var parentCourse = $("#parentCourse").val();
+				var name = $("#name").val();
+				var simpleName = $("#simpleName").val();
+				var courseCount = $("#courseCount").val();
+				var periodId = $("#periodId").val();
+				if(name == "" || simpleName == "" || courseCount == ""){
+					myLayer.alert("请输入完整的信息");
+					return false;
+				}else if(parentCourse == 0){
+					myLayer.alert("请选择课程所属教材");
+					return false;
+				}else if(isNaN(courseCount)||parseInt(courseCount)<0){
+					myLayer.alert("请输入正确的课时数");
+					return false;
+				}
+				var course = {
+					"zid":id,
+					"name":name,
+					"simpleName":simpleName,
+					"periodId":periodId,
+					"courseCount":courseCount,
+					"parentId":parentCourse
+				}
+				$.ajax({
+					url:"courses/course",
+					data:JSON.stringify(course),
+					contentType:"application/json",
+					type:"put",
+					dataType:"json",
+					success:function(data){
+						if(data.code == 200){
+							myLayer.alert("保存成功");
+							location.reload();
+						}else{
+							myLayer.alert("保存失败");
+							$("#editForm")[0].reset();
+						}
+					}
+				});
+			});
+			
+		});
+		
+		
+	</script>
+</html>
